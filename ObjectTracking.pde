@@ -3,13 +3,11 @@ import java.util.Map;
 import java.util.Collections;
 import java.util.List;
 
-int Binary[] = {1, 0};
-String Hex[] = {"1", "2"};
-String Operator[] = {"+", "-"};
-
 TuioProcessing tuioClient;
 
 PFont font;
+
+public static int[] Binary = {1,1,1,1,1};
 
 Map <Integer, TrackedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, TrackedObject>());
@@ -36,27 +34,34 @@ void draw()
   }
 }
 
-
- boolean contains(int element, int[] arr) {
- 
- boolean goat = false;
- 
-  for(int i = 0; i < arr.length; i++){
-    if (element == arr[i]) {
-      goat = true;
-    }    
-  }
-  return goat;
- }
-
 void addTuioObject(TuioObject tobj) {
   
   int id = tobj.getSymbolID();
   
-  
+  TrackedObject o = new TrackedObject(" ");
   
   synchronized(objects) {
+    
+    switch(id){
+      
+      case 0:  case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+      o = new TrackedObject("0");
+      break;
+      
+      case 8: case 9: case 10: case 11: case 12: case 13: case 14: case 15:
+      o = new TrackedObject("1");
+      break;
+      
+    }
+    
     o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
+    
+    System.out.println(" ");
+    System.out.println(id);
+    System.out.println(tobj.getScreenX(width));
+    System.out.println(tobj.getScreenY(height));
+    System.out.println(" ");
+    
     o.size = 50;
     objects.put(id, o);
   }
@@ -67,6 +72,13 @@ void updateTuioObject (TuioObject tobj) {
   int id = tobj.getSymbolID();
   synchronized(objects) {
     if (objects.containsKey(id)) {
+      
+      System.out.println(" ");
+      System.out.println(id);
+      System.out.println(tobj.getScreenX(width));
+      System.out.println(tobj.getScreenY(height));
+      System.out.println(" ");
+    
       TrackedObject o = objects.get(id);
       o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
       o.setAngle(tobj.getAngle());
@@ -78,6 +90,13 @@ void updateTuioObject (TuioObject tobj) {
 void removeTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
   synchronized(objects) {
+    
+    System.out.println(" ");
+    System.out.println(id);
+    System.out.println(tobj.getScreenX(width));
+    System.out.println(tobj.getScreenY(height));
+    System.out.println(" ");
+    
     if (objects.containsKey(id)) {
       objects.remove(id);
     }

@@ -1,4 +1,4 @@
-class TrackedObject{
+class TrackedObject extends ObjectTracking{
   color rectCol;
   color textCol;
   
@@ -8,7 +8,7 @@ class TrackedObject{
   float angle=0;
   int size=60;
   int rad=10;
- 
+  
  TrackedObject(String t){
    
   rectCol=color(255, 50, 50);
@@ -24,13 +24,13 @@ class TrackedObject{
 
     pushMatrix();
     translate(locX, locY);
-    println("angle is " + angle);
     rotate(angle);
-    rect(0, 0, size, size, rad);
+    rect(0, 0, size, size, rad, rad, rad, rad);
     popMatrix();
 
     fill(textCol);
     text(text, locX, locY); 
+    printArr();
     
   }
   
