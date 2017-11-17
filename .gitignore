@@ -1,0 +1,7 @@
+# .vscode/*
+.*
+# dont ignore .gitignore
+!/.gitignore
+# output of processing sketches (including .java and .class)
+out/
+
