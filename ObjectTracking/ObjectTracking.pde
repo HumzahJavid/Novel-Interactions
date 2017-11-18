@@ -6,6 +6,7 @@ import java.util.List;
 TuioProcessing tuioClient;
 
 PFont font;
+//the binary input (obeject ids)
 public static int[] binaryInput = new int[8];
 //keeps track of the first available index(empty space) of positionTrack
 public static int temp = 0;
@@ -17,6 +18,7 @@ Map <Integer, TrackedObject> objects =
 
 void setup()
 {
+  positionTrack = setupEmptyPositionTrack(positionTrack);
   size(1000, 650);
   textSize(30);
 
@@ -41,36 +43,39 @@ void addTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
   TrackedObject o = new TrackedObject(" ");
   synchronized(objects) {
-    switch(id) {
+    //no number objects added if array is full
+    if (temp < positionTrack.length) {
+      switch(id) {
 
-    case 0:  
-    case 1: 
-    case 2: 
-    case 3: 
-    case 4: 
-    case 5: 
-    case 6: 
-    case 7:
-      o = new TrackedObject("0");
-      break;
+      case 0:  
+      case 1: 
+      case 2: 
+      case 3: 
+      case 4: 
+      case 5: 
+      case 6: 
+      case 7:
+        o = new TrackedObject("0");
+        break;
 
-    case 8: 
-    case 9: 
-    case 10: 
-    case 11: 
-    case 12: 
-    case 13: 
-    case 14: 
-    case 15:
-      o = new TrackedObject("1");
-      break;
+      case 8: 
+      case 9: 
+      case 10: 
+      case 11: 
+      case 12: 
+      case 13: 
+      case 14: 
+      case 15:
+        o = new TrackedObject("1");
+        break;
+      }
+      o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
+
+      positionTrack[temp][0] = id;
+      positionTrack[temp][1] = tobj.getScreenX(width);
+      positionTrack[temp][2] = tobj.getScreenY(height);
+        temp++;
     }
-    o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
-
-    positionTrack[temp][0] = id;
-    positionTrack[temp][1] = tobj.getScreenX(width);
-    positionTrack[temp][2] = tobj.getScreenY(height);
-    temp++;
     System.out.println(" ");
 
     for (int i = 0; i < 8; i++) {
@@ -128,11 +133,15 @@ int[][] removeObjectFromPositionTrack(int id, int[][] positionTrack){
       temp = temp - 1;
     }
   }
+  //clear the last object
+  for (int i = 0; i < 3; i++) {
+    positionTrack[7][i] = -1;
+  }
   return positionTrack;
 }
 
 void SortPosition() {
-  if (positionTrack[7][1] == 0) {
+  if (positionTrack[7][1] == -1) {
     ;
   } else {
     int biggestX = 0;
@@ -178,6 +187,14 @@ public static void printArr(int[] arr) {
   System.out.println("");
 }
 
+public static int[][] setupEmptyPositionTrack(int[][] positionTrack) {
+  for (int[] numberObject : positionTrack) {
+    numberObject[0] = -1;
+    numberObject[1] = -1;
+    numberObject[2] = -1;
+  }
+  return positionTrack;
+}
 // --------------------------------------------------------------
 // called when a cursor is added to the scene
 void addTuioCursor(TuioCursor tcur) {
