@@ -10,8 +10,8 @@ PFont font;
 public static int temp = 0;
 //stores all the detected bits
 ArrayList<TrackedObject> bitList = new ArrayList<TrackedObject>();
-Binary binary1 = new Binary();
-Binary binary2 = new Binary(1000-60, 30);
+Binary binary1 = new Binary(4);
+Binary binary2 = new Binary(4, 1000-60, 30);
 Map <Integer, TrackedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, TrackedObject>());
 
@@ -117,7 +117,7 @@ void addTuioObject(TuioObject tobj) {
         }
       } //end if else bitlist < 5
     }// end if o is Bit
-  }//end sync
+  //}//end sync
 }
 
 // called when an object is moved

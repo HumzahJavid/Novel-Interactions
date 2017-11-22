@@ -1,47 +1,37 @@
-class TrackedObject {
-  color rectCol;
-  color textCol;
-
-  String text = " ";
-
-  int locX, locY;
+class TrackedObject extends DetectedObject {
   float angle=0;
   int size=60;
-  int rad=10;
   int value = -1;
   int id = -1;
-  TrackedObject() {
 
+  TrackedObject() {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-
     text=" ";
   }
+
   TrackedObject(String t) {
-
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-
     text=t;
   }
 
-  public TrackedObject(String t, int v) {
+  TrackedObject(String t, int v) {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     text=t;
-    this.value = v;
+    value = v;
   }
 
-  public TrackedObject(String t, int v, int id) {
+  TrackedObject(String t, int v, int id) {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     text=t;
-    this.value = v;
-    this.id = id;
+    value = v;
+    id = id;
   }
 
   void draw() {
-    //rectMode(CENTER);
     noFill();
     stroke(rectCol);
 
@@ -54,6 +44,21 @@ class TrackedObject {
     fill(textCol);
     text(text, locX, locY);
   }
+  float getAngle() {
+    return this.angle;
+  }
+  
+  int getId() {
+    return this.id;
+  }
+
+  String getText() {
+    return this.text;
+  }
+
+  int getValue() {
+    return this.value;
+  }
 
   int getX() {
     return this.locX;
@@ -61,18 +66,6 @@ class TrackedObject {
 
   int getY() {
     return this.locY;
-  }
-
-  String getText() {
-    return this.text;
-  }
-  
-  int getValue() {
-    return this.value;
-  }
-  
-  int getId() {
-    return this.id;
   }
 
   void setPos(int x, int y) {
@@ -85,20 +78,20 @@ class TrackedObject {
     locY+=dy;
   }
 
-  void setText(String t) {
-    this.text = t;
-  }
-
-  void setValue(int v) {
-    this.value = v;
+  void setAngle(float a) {
+    angle=a;
   }
 
   void setId(int id) {
     this.id = id;
   }
 
-  void setAngle(float a) {
-    angle=a;
+  void setText(String t) {
+    this.text = t;
+  }
+
+  void setValue(int v) {
+    this.value = v;
   }
 
   String toString() {

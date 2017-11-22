@@ -1,63 +1,48 @@
-class Binary {
-  color rectCol;
-  color textCol;
-
-  String text = " ";
-
-  int locX, locY;
-  float angle=0;
+class Binary extends DetectedObject {
   int height=60;
-  int width=height*2;//maxlength
-  int rad=10;
-  int value = 0000;
-  int id = -1;
-  int size;
+  int width=height*2;
+  int locX = width / 2;
+  int locY = height / 2;
+  String text = "_ _ _ _";
 
-  private final int MAXIMUM_LENGTH = 4;
-  ArrayList<TrackedObject> bits = new ArrayList<TrackedObject>(MAXIMUM_LENGTH);
+  private final int MAXIMUM_LENGTH;
+  ArrayList<TrackedObject> bits = new ArrayList<TrackedObject>();
 
-  public Binary() {
+  public Binary(int maxLength) {
+    MAXIMUM_LENGTH = maxLength;
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    text="_ _ _ _";
-    locX = width / 2;
-    locY = height / 2;
   }
 
-  public Binary(int x, int y) {
+  public Binary(int maxLength, int x, int y) {
+    MAXIMUM_LENGTH = maxLength;
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    text="_ _ _ _";
     locX = x;
     locY = y;
   }
 
   public Binary(ArrayList<TrackedObject> bits) {
+    MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    text="_ _ _ _";
-    this.bits.addAll(bits);
+    bits.addAll(bits);
     locX = width / 2;
     locY = height / 2;
   }
 
   void draw() {
-    //need to position text in center of rectsomehow
-    //rectMode(CENTER);
     textAlign(CENTER, CENTER);
     noFill();
     stroke(rectCol);
 
     pushMatrix();
     translate(locX, locY);
-    rotate(angle);
     rect(0, 0, width, height, rad, rad, rad, rad);
-    //rect(width/2, height/2, width, height, rad, rad, rad, rad);
     popMatrix();
-    this.updateText3();
+    updateText();
     fill(textCol);
     text(text, locX, locY);
-    //System.out.println("locationX Y = " + locX + " " + locY);
   }
 
   void setPos(int x, int y) {
@@ -70,32 +55,12 @@ class Binary {
     locY+=dy;
   }
 
-  void setAngle(float a) {
-    angle=a;
-  }
-
   String getText() {
     return this.text;
   }
 
-  int getId() {
-    return this.id;
-  }
-
-  int getValue() {
-    return this.value;
-  }
-
   void setText(String t) {
     this.text = t;
-  }
-
-  void setValue(int v) {
-    this.value = v;
-  }
-
-  void setId(int id) {
-    this.id = id;
   }
 
   void add(TrackedObject bit) {
@@ -103,9 +68,7 @@ class Binary {
       this.bits.add(bit);
     } else {
       System.out.println("BINARY VALUE IS FULL");
-      //project to screen draw an X over the binary number momentarily
     }
-    //this.updateText3(); //put in if for add and remove more efficient;
   }
 
   void remove(TrackedObject bit) {
@@ -114,54 +77,11 @@ class Binary {
     } else {
       System.out.println("BINARY VALUE IS EMPTY");
     }
-    //this.updateText3();
   }
 
   private void updateText() {
-    String updatedText = "";
-    for (TrackedObject bit : bits) {
-      System.out.println("bit.value = " + bit.value);
-      updatedText += bit.value;
-      System.out.println("updatedText so far " + updatedText);
-    }
-    text = updatedText;
-  }
-
-  private void updateText2() {
-    String updatedText = "_ _ _ _"; //change to the current value
-    System.out.println("updatedText.length = " + updatedText.length());
-    char[] textChars = updatedText.toCharArray();
-    int length = textChars.length;
-    System.out.println("textChars = " + length);
-    int index = length;
-
-
-    //replace _ with each element of bits
-    for (TrackedObject bit : bits) {
-      //find the next _ char index starting from theRHS
-      for (int i = length - 1; i > -1; i--) {
-        System.out.println(textChars[i]);
-        if (textChars[i] == '_') {
-          System.out.println("found  char _" + textChars[i] + " at index " + index);
-          index = i;
-          //exit loop
-          i = -1;
-        }
-      }
-
-      //i want to store either a 0 or 1 into the textChars at the correct index
-      //'0' as a char has value 48
-      //the cast is (0 + 48) or (1 + 48) which gives currentChar= 0 or 1 
-      char currentChar = (char)(bit.value + '0');
-      textChars[index] = currentChar;
-      System.out.println("current chars so far = " + String.valueOf(textChars));
-    }
-    System.out.println("finally text is " + text);
-    text = String.valueOf(textChars);
-  }
-
-  private void updateText3() {
-    StringBuilder updatedText = new StringBuilder("_ _ _ _"); //change to the current value
+    //will not need to run this until the binary number values(# bits) are full
+    StringBuilder updatedText = new StringBuilder("_ _ _ _");
     int length = updatedText.length();
     int index = length;
     char bitChar = ' ';
@@ -187,10 +107,7 @@ class Binary {
     //but starts filling from the most signifcant bit 
     //updatedText = updatedText.reverse();
     text = updatedText.toString();
-    //System.out.println("The updated text is " + text);
   }
-  
-  
 
   int size() {
     return bits.size();
@@ -206,8 +123,7 @@ class Binary {
   }
   
   String toString() {
-    return " id: " + id + " value: " + value +  
-      "\n rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " angle " + angle + " width: " + width + " height" + height + " rad: " + rad
+    return "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
       + " TrackedObject type: Binary";
   }
 }
