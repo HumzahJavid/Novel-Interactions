@@ -27,16 +27,29 @@ class AndGate extends LogicGate {
     fill(textCol);
     text(text, locX, locY);
     drawOutputText();
+    drawLineToInputs();
   }
   
   public void blankOutput() {
-    input1 = -1;
-    input2 = -1;
+    input1 = new Bit("", -1);
+    input2 = new Bit("", -1);
     updateOutput();
   }
 
-  int calculateOutput(int bit1, int bit2){
-    return (bit1 & bit2);
+  int calculateOutput(Bit bit1, Bit bit2){
+    return (bit1.value & bit2.value);
+  }
+  
+  void drawLineToInputs(){
+    //if both inputs are assigned a value
+    if (input1.value != -1 && input2.value != -1){
+      float input1X = input1.getX();
+      float input1Y = input1.getY();
+      float input2X = input2.getX();
+      float input2Y = input2.getY();
+      line(input1X, input1Y, this.getX(), this.getY());
+      line(input2X, input2Y, this.getX(), this.getY());
+    }
   }
   
   void drawOutputText(){
@@ -44,20 +57,21 @@ class AndGate extends LogicGate {
     updateOutput();
     float answerX= locX+ 1.2* size; //move it to the right of the gate 
     float answerY= locY;
+    pushMatrix();
     translate(answerX, answerY);
     //text(""+output, 0, -0.15*textAscent()); 
     text(""+output, 0, 0);
+    popMatrix();
   }
   
   void output(Bit bit1, Bit bit2){
     updateInputs(bit1, bit2);
     updateOutput();
-    System.out.println("output = " + this.output);
   }
   
-  void updateInputs(TrackedObject bit1, TrackedObject bit2){
-    this.input1 = bit1.value;
-    this.input2 = bit2.value;
+  void updateInputs(Bit bit1, Bit bit2){
+    this.input1 = bit1;
+    this.input2 = bit2;
   }
   
   void updateOutput(){

@@ -1,7 +1,7 @@
 abstract class LogicGate extends DetectedObject {
   int size=60;
-  int input1;
-  int input2;
+  Bit input1;
+  Bit input2;
   int output;
 
   LogicGate() {

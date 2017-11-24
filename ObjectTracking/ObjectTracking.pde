@@ -162,7 +162,6 @@ void updateTuioObject (TuioObject tobj) {
   if (checkInputsWithinRange(and1, bitList)) {
     ArrayList<Bit> inputBits = new ArrayList<Bit>();
     inputBits = getBitsInRange(and1, bitList);
-    System.out.println("input bits " + inputBits.get(0).value + " " + inputBits.get(1).value);
     //calculates output for the gate
     and1.output(inputBits.get(0), inputBits.get(1));
   } else {
