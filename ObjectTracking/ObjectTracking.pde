@@ -28,7 +28,9 @@ void setup()
 
   //setup the test AndGate on the screen 
   and1 = new AndGate(700, 300);
+  or1 = new OrGate(300, 500);
   gateList.add(and1);
+  gateList.add(or1);
 }
 
 void draw()
@@ -55,17 +57,17 @@ public static boolean contains(int element, int[] arr) {
   return contained;
 }
 
-public static boolean checkInputsWithinRange(LogicGate and1, ArrayList<Bit> bitList) {
+public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitList) {
   //checks the distance between the gate and all detected bits 
   //if 2 bits are within xrange of the gate then return true
-  float xAnd = and1.getX();
-  float yAnd  = and1.getY();
+  float xGate = gate.getX();
+  float yGate = gate.getY();
   int bitsDetected = 0;
 
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-    if (((xAnd - xBit) < 100) && (withinYRange(yAnd, and1.size, yBit))){
+    if (((xGate - xBit) < 100) && (withinYRange(yGate, gate.size, yBit))){
       bitsDetected += 1;
     }
   }
@@ -78,16 +80,16 @@ public static boolean checkInputsWithinRange(LogicGate and1, ArrayList<Bit> bitL
   
 }
 
-public static ArrayList<Bit> getBitsInRange(LogicGate and1, ArrayList<Bit> bitList) {
+public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitList) {
   //returns all the 
-  float xAnd = and1.getX();
-  float yAnd  = and1.getY();
+  float xGate = gate.getX();
+  float yGate = gate.getY();
   ArrayList<Bit> closeBits = new ArrayList<Bit>();
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
     
-    if ((xAnd - xBit) < 100) {
+    if (((xGate - xBit) < 100) && (withinYRange(yGate, gate.size, yBit))) {
       closeBits.add(bit);
     }
   }
@@ -159,15 +161,17 @@ void updateTuioObject (TuioObject tobj) {
       o.setAngle(tobj.getAngle());
     }
   }
-  if (checkInputsWithinRange(and1, bitList)) {
-    ArrayList<Bit> inputBits = new ArrayList<Bit>();
-    inputBits = getBitsInRange(and1, bitList);
-    //calculates output for the gate
-    and1.output(inputBits.get(0), inputBits.get(1));
-  } else {
-    //complete output (1 bit for Not, 2 bits for all other gates) no longer being detected so set output to blank
-    and1.blankOutput();
-  };
+  for(LogicGate gate : gateList){
+    if (checkInputsWithinRange(gate, bitList)) {
+      ArrayList<Bit> inputBits = new ArrayList<Bit>();
+      inputBits = getBitsInRange(gate, bitList);
+      //calculates output for the gate
+      gate.output(inputBits.get(0), inputBits.get(1));
+    } else {
+      //complete output (1 bit for Not, 2 bits for all other gates) no longer being detected so set output to blank
+      gate.blankOutput();
+    };
+  }
 }
 
 // called when an object is removed from the scene
