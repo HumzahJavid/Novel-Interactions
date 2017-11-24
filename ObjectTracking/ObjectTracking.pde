@@ -44,7 +44,7 @@ void draw()
   }
 }
 
-public boolean contains(int element, int[] arr) {
+public static boolean contains(int element, int[] arr) {
   //returns true if the element "element" is is in the array "arr"  
   boolean contained = false;
   for (int i = 0; i < arr.length; i++) {
@@ -65,7 +65,7 @@ public static boolean checkInputsWithinRange(LogicGate and1, ArrayList<Bit> bitL
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-    if ((xAnd - xBit) < 100) {
+    if (((xAnd - xBit) < 100) && (withinYRange(yAnd, and1.size, yBit))){
       bitsDetected += 1;
     }
   }
@@ -93,6 +93,17 @@ public static ArrayList<Bit> getBitsInRange(LogicGate and1, ArrayList<Bit> bitLi
   }
 
   return closeBits;
+}
+
+public static boolean withinYRange(float yGate, int gateHeight, float yBit){
+  //check if object is within 100 of the top of the gate or bottom of the gate
+  float yMin = yGate - 100;
+  float yMax = yGate + gateHeight + 100;
+  if ((yBit >= yMin)&&(yBit <= yMax)){
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void addTuioObject(TuioObject tobj) {
