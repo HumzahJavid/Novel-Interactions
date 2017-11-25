@@ -28,6 +28,10 @@ public class Bit extends TrackedObject {
   }
 
   public String toString() {
+    return ""+this.value;
+  }
+
+  public String toString(Boolean b) {
     return super.toString() + "TrackedObject type: Bit";
   }
 }

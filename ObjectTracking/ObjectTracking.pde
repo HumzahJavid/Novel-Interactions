@@ -163,8 +163,7 @@ void addTuioObject(TuioObject tobj) {
     if (o instanceof Bit) {
       bitList.add(o);
     }
-  }
-  else if (contains(id, gateIds)) {
+  } else if (contains(id, gateIds)) {
     //if the id is that of a logicGate, create the corresponding logic gate (o) 
     //add o to the object hashmap and the gateList arraylist 
     LogicGate o;
@@ -194,28 +193,52 @@ void addTuioObject(TuioObject tobj) {
 // called when an object is moved
 void updateTuioObject (TuioObject tobj) {
   int id = tobj.getSymbolID();
+  ArrayList<Bit> outputBit = new ArrayList<Bit>();
   synchronized(objects) {
     if (objects.containsKey(id)) {
-
       DetectedObject o = objects.get(id);
       o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
       o.setAngle(tobj.getAngle());
+    }
+
+    if (contains(id, gateIds)) {
+      //now that output of a gate is a Bit
     }
   }
   for (LogicGate gate : gateList) {
     if (checkInputsWithinRange(gate, bitList)) {
       ArrayList<Bit> inputBits = new ArrayList<Bit>();
       inputBits = getBitsInRange(gate, bitList);
-      //calculates output for the gate
+      //calculates output for the gate and add it to a list of outputBits
       if (gate instanceof NotGate) {
-        gate.output(inputBits.get(0));
+        outputBit.add(gate.output(inputBits.get(0)));
       } else {
-        gate.output(inputBits.get(0), inputBits.get(1));
+        outputBit.add(gate.output(inputBits.get(0), inputBits.get(1)));
       }
     } else {
       //input no longer being detected set output to blank (-1)
       gate.blankOutput();
     };
+  }  
+  //TODO: make this a recursive function, which takes a list of logic gates
+  //      and output bits, 
+  //      calculates outputs from any (output) bits which are in range of a gate
+  //      base case no new output bits detected
+  //      producing a new set of output bits used in a recursive call
+  //with all newly created output bits need to check if any are in range of gates to be considered inputs 
+  for (LogicGate gate : gateList) {
+    if (checkInputsWithinRange(gate, outputBit)) {
+      ArrayList<Bit> inputBits = new ArrayList<Bit>();
+      inputBits = getBitsInRange(gate, outputBit);
+      //calculates output for the gate and add it to a list of outputBits
+      if (gate instanceof NotGate) {
+        System.out.println("Not gate has an input " + inputBits.get(0));
+        gate.output(inputBits.get(0));
+      } else {
+        System.out.println("not a not gate has an inputS " + inputBits.get(0) + " ..." + inputBits.get(1));
+        gate.output(inputBits.get(0), inputBits.get(1));
+      }
+    }
   }
 }
 
