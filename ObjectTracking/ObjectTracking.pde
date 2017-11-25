@@ -29,8 +29,10 @@ void setup()
   //setup the test AndGate on the screen 
   and1 = new AndGate(700, 300);
   or1 = new OrGate(300, 500);
+  not1 = new NotGate(500, 100);
   gateList.add(and1);
   gateList.add(or1);
+  gateList.add(not1);
 }
 
 void draw()
@@ -67,15 +69,23 @@ public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitL
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-    if (((xGate - xBit) < 100) && (withinYRange(yGate, gate.size, yBit))){
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)){
       bitsDetected += 1;
     }
   }
-  
-  if (bitsDetected == 2) {
-    return true;
-  } else {
-    return false;
+  if (gate instanceof NotGate){
+    if (bitsDetected == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  else{
+    if (bitsDetected == 2) {
+      return true;
+    } else {
+      return false;
+    }
   }
   
 }
@@ -89,12 +99,23 @@ public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitLi
     float xBit = bit.getX();
     float yBit = bit.getY();
     
-    if (((xGate - xBit) < 100) && (withinYRange(yGate, gate.size, yBit))) {
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)) {
       closeBits.add(bit);
     }
   }
 
   return closeBits;
+}
+
+public static boolean withinXRange(float xGate, int gateWidth, float xBit){
+  //check if object is within 100 of the left/right of the gate
+  float xMin = xGate - 100;
+  float xMax = xGate;// + gateWidth + 100;
+  if ((xBit >= xMin)&&(xBit <= xMax)){
+    return true;
+  } else {
+    return false;
+  }
 }
 
 public static boolean withinYRange(float yGate, int gateHeight, float yBit){
@@ -166,9 +187,13 @@ void updateTuioObject (TuioObject tobj) {
       ArrayList<Bit> inputBits = new ArrayList<Bit>();
       inputBits = getBitsInRange(gate, bitList);
       //calculates output for the gate
-      gate.output(inputBits.get(0), inputBits.get(1));
+      if (gate instanceof NotGate) {
+        gate.output(inputBits.get(0));
+      } else {
+        gate.output(inputBits.get(0), inputBits.get(1));
+      }
     } else {
-      //complete output (1 bit for Not, 2 bits for all other gates) no longer being detected so set output to blank
+      //input no longer being detected set output to blank (-1)
       gate.blankOutput();
     };
   }

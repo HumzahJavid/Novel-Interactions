@@ -31,7 +31,9 @@ abstract class LogicGate extends DetectedObject {
   
   abstract void blankOutput();
   //for all other gates
-  abstract void output(Bit bit1, Bit bit2);
+  //abstract void output(Bit bit1, Bit bit2);
+  void output(Bit bit1){};
+  void output(Bit bit1, Bit bit2){};
   String toString() {
     return "\n rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " size: " + size
       + " TrackedObject type: LogicGate";
