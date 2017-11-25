@@ -9,12 +9,15 @@ TuioProcessing tuioClient;
 PFont font;
 //stores all the detected bits
 ArrayList<Bit> bitList = new ArrayList<Bit>();
-Map <Integer, TrackedObject> objects = 
-  Collections.synchronizedMap(new HashMap<Integer, TrackedObject>()); 
+Map <Integer, DetectedObject> objects = 
+  Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
 LogicGate and1;
 LogicGate or1;
 LogicGate not1;
 ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
+//and, or, not, .... xor nand nor nxor 
+int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+int gateIds[] = {30, 31, 32};
 
 void setup()
 {
@@ -25,21 +28,13 @@ void setup()
   textAlign(CENTER, CENTER);
 
   tuioClient  = new TuioProcessing(this);
-
-  //setup the test AndGate on the screen 
-  and1 = new AndGate(700, 300);
-  or1 = new OrGate(300, 500);
-  not1 = new NotGate(500, 100);
-  gateList.add(and1);
-  gateList.add(or1);
-  gateList.add(not1);
 }
 
 void draw()
 {
   background(255);
   synchronized(objects) {
-    for (TrackedObject to : objects.values()) {
+    for (DetectedObject to : objects.values()) {
       to.draw();
     }
     for (LogicGate lg : gateList) {
@@ -69,25 +64,23 @@ public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitL
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)){
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)) {
       bitsDetected += 1;
     }
   }
-  if (gate instanceof NotGate){
+  if (gate instanceof NotGate) {
     if (bitsDetected == 1) {
       return true;
     } else {
       return false;
     }
-  }
-  else{
+  } else {
     if (bitsDetected == 2) {
       return true;
     } else {
       return false;
     }
   }
-  
 }
 
 public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitList) {
@@ -98,7 +91,7 @@ public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitLi
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-    
+
     if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)) {
       closeBits.add(bit);
     }
@@ -107,22 +100,22 @@ public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitLi
   return closeBits;
 }
 
-public static boolean withinXRange(float xGate, int gateWidth, float xBit){
+public static boolean withinXRange(float xGate, int gateWidth, float xBit) {
   //check if object is within 100 of the left/right of the gate
   float xMin = xGate - 100;
   float xMax = xGate;// + gateWidth + 100;
-  if ((xBit >= xMin)&&(xBit <= xMax)){
+  if ((xBit >= xMin)&&(xBit <= xMax)) {
     return true;
   } else {
     return false;
   }
 }
 
-public static boolean withinYRange(float yGate, int gateHeight, float yBit){
+public static boolean withinYRange(float yGate, int gateHeight, float yBit) {
   //check if object is within 100 of the top of the gate or bottom of the gate
   float yMin = yGate - 100;
   float yMax = yGate + gateHeight + 100;
-  if ((yBit >= yMin)&&(yBit <= yMax)){
+  if ((yBit >= yMin)&&(yBit <= yMax)) {
     return true;
   } else {
     return false;
@@ -131,44 +124,71 @@ public static boolean withinYRange(float yGate, int gateHeight, float yBit){
 
 void addTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
-  Bit o = new Bit();
-  synchronized(objects) {
-    //no number objects added if array is full
-    switch(id) {
+  if (contains(id, bitIds)) { 
+    Bit o = new Bit();
+    synchronized(objects) {
+      //no number objects added if array is full
+      switch(id) {
 
-    case 0:  
-    case 1: 
-    case 2: 
-    case 3: 
-    case 4: 
-    case 5: 
-    case 6: 
-    case 7:
-      o.setText("0");
-      o.setValue(0);
-      o.setId(id);
+      case 0:  
+      case 1: 
+      case 2: 
+      case 3: 
+      case 4: 
+      case 5: 
+      case 6: 
+      case 7:
+        o.setText("0");
+        o.setValue(0);
+        o.setId(id);
+        break;
+
+      case 8: 
+      case 9: 
+      case 10: 
+      case 11: 
+      case 12: 
+      case 13: 
+      case 14: 
+      case 15:
+        o.setText("1");
+        o.setValue(1);
+        o.setId(id);
+        break;
+      }
+      o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
+    }
+    o.size = 50;
+    objects.put(id, o);
+    if (o instanceof Bit) {
+      bitList.add(o);
+    }
+  }
+  else if (contains(id, gateIds)) {
+    //if the id is that of a logicGate, create the corresponding logic gate (o) 
+    //add o to the object hashmap and the gateList arraylist 
+    LogicGate o;
+    switch (id) {
+    case 30:
+      o = new AndGate();
       break;
-
-    case 8: 
-    case 9: 
-    case 10: 
-    case 11: 
-    case 12: 
-    case 13: 
-    case 14: 
-    case 15:
-      o.setText("1");
-      o.setValue(1);
-      o.setId(id);
+    case 31:
+      o = new OrGate();
+      break;
+    case 32:
+      o = new NotGate();
+      break;
+    default:
+      o = new AndGate();
       break;
     }
     o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
-  }
-  o.size = 50;
-  objects.put(id, o);
-  if (o instanceof Bit) {
-    bitList.add(o);
-  }
+    o.size = 50;
+    objects.put(id, o);
+    if (o instanceof LogicGate) {
+      gateList.add(o);
+    }
+  };
 }
 
 // called when an object is moved
@@ -177,12 +197,12 @@ void updateTuioObject (TuioObject tobj) {
   synchronized(objects) {
     if (objects.containsKey(id)) {
 
-      TrackedObject o = objects.get(id);
+      DetectedObject o = objects.get(id);
       o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
       o.setAngle(tobj.getAngle());
     }
   }
-  for(LogicGate gate : gateList){
+  for (LogicGate gate : gateList) {
     if (checkInputsWithinRange(gate, bitList)) {
       ArrayList<Bit> inputBits = new ArrayList<Bit>();
       inputBits = getBitsInRange(gate, bitList);

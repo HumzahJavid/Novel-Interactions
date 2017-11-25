@@ -15,7 +15,7 @@ public class Bit extends TrackedObject {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     text=t;
-    this.value = value;
+    this.value = v;
     this.id = -1;
   }
 
@@ -23,7 +23,7 @@ public class Bit extends TrackedObject {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     text=t;
-    this.value = value;
+    this.value = v;
     this.id = id;
   }
 

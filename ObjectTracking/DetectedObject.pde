@@ -1,4 +1,5 @@
 class DetectedObject {
+  float angle=0;
   color rectCol;
   color textCol;
 
@@ -27,11 +28,16 @@ class DetectedObject {
 
     pushMatrix();
     translate(locX, locY);
+    rotate(angle);
     rect(0, 0, 60, 60, rad, rad, rad, rad);
     popMatrix();
 
     fill(textCol);
     text(text, locX, locY);
+  }
+  
+  float getAngle() {
+    return this.angle;
   }
 
   String getText() {
@@ -44,6 +50,10 @@ class DetectedObject {
 
   int getY() {
     return this.locY;
+  }
+  
+  void setAngle(float a) {
+    angle=a;
   }
 
   void setPos(int x, int y) {
