@@ -1,4 +1,4 @@
-public class Bit extends TrackedObject {   
+public class Bit extends DetectedObject {   
   float angle=0;
   int size=60;
   int value = -1;
@@ -19,32 +19,15 @@ public class Bit extends TrackedObject {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     text=t;
-<<<<<<< HEAD
-    this.value = v;
-    this.id = -1;
-=======
-    value = value;
->>>>>>> master
+    value = v;
   }
 
-  Bit(String t, int v, int id) {
+  Bit(String t, int v, int newId) {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     text=t;
-<<<<<<< HEAD
-    this.value = v;
-    this.id = id;
-  }
-
-  public String toString() {
-    return ""+this.value;
-  }
-
-  public String toString(Boolean b) {
-    return super.toString() + "TrackedObject type: Bit";
-=======
-    value = value;
-    id = id;
+    value = v;
+    id = newId;
   }
 
   void draw() {
@@ -110,7 +93,7 @@ public class Bit extends TrackedObject {
     this.value = v;
   }
 
-  String toString() {
->>>>>>> master
+  public String toString() {
+    return ""+this.value;
   }
 }

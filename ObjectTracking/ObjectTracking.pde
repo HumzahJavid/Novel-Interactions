@@ -262,7 +262,7 @@ void updateTuioObject (TuioObject tobj) {
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
-  TrackedObject bitToRemove = new Bit();
+  Bit bitToRemove = new Bit();
   synchronized(objects) {
     if (objects.containsKey(id)) {
       objects.remove(id);

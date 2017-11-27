@@ -6,7 +6,7 @@ class Binary extends DetectedObject {
   String text = "_ _ _ _";
 
   private final int MAXIMUM_LENGTH;
-  ArrayList<TrackedObject> bits = new ArrayList<TrackedObject>();
+  ArrayList<Bit> bits = new ArrayList<Bit>();
 
   public Binary(int maxLength) {
     MAXIMUM_LENGTH = maxLength;
@@ -22,7 +22,7 @@ class Binary extends DetectedObject {
     locY = y;
   }
 
-  public Binary(ArrayList<TrackedObject> bits) {
+  public Binary(ArrayList<Bit> bits) {
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
@@ -63,7 +63,7 @@ class Binary extends DetectedObject {
     this.text = t;
   }
 
-  void add(TrackedObject bit) {
+  void add(Bit bit) {
     if (this.bits.size() < MAXIMUM_LENGTH) {
       this.bits.add(bit);
     } else {
@@ -71,7 +71,7 @@ class Binary extends DetectedObject {
     }
   }
 
-  void remove(TrackedObject bit) {
+  void remove(Bit bit) {
     if (this.bits.size() > 0) {
       this.bits.remove(bit);
     } else {
@@ -87,7 +87,7 @@ class Binary extends DetectedObject {
     char bitChar = ' ';
 
     //replace _ with each element of bits
-    for (TrackedObject bit : bits) {
+    for (Bit bit : bits) {
       if (bit.value == 0) {
         bitChar = '0';
       } else {
@@ -113,17 +113,17 @@ class Binary extends DetectedObject {
     return bits.size();
   }
 
-  boolean contains(TrackedObject bit) {
+  boolean contains(Bit bit) {
     return bits.contains(bit);
   }
   
-  public void sort(Comparator<TrackedObject> comp) {
+  public void sort(Comparator<Bit> comp) {
     Collections.sort(this.bits, comp);
     //updateText3();
   }
   
   String toString() {
     return "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
-      + " TrackedObject type: Binary";
+      + " Bit type: Binary";
   }
 }

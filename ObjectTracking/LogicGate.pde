@@ -40,6 +40,6 @@ abstract class LogicGate extends DetectedObject {
 
   String toString() {
     return "\n rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " size: " + size
-      + " TrackedObject type: LogicGate";
+      + " Bit type: LogicGate";
   }
 }
