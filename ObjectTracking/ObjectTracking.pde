@@ -15,8 +15,9 @@ LogicGate and1;
 LogicGate or1;
 LogicGate not1;
 ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
-//and, or, not, .... xor nand nor nxor 
+
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+//and, or, not, .... xor nand nor nxor 
 int gateIds[] = {30, 31, 32};
 
 void setup()
@@ -34,11 +35,9 @@ void draw()
 {
   background(255);
   synchronized(objects) {
+    //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
     for (DetectedObject to : objects.values()) {
       to.draw();
-    }
-    for (LogicGate lg : gateList) {
-      lg.draw();
     }
   }
 }
@@ -128,6 +127,7 @@ void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit> bitListAndOu
     propogateOutputs(gateList, bitListAndOutputs, num+1);
   } else {
     System.out.println("ending propogateOutputs at call # " + num);
+    bitListAndOutputs.clear();
   }
 }
 
@@ -214,6 +214,7 @@ void addTuioObject(TuioObject tobj) {
     }
     o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
     o.size = 50;
+    o.id = id;
     objects.put(id, o);
     if (o instanceof LogicGate) {
       gateList.add(o);
@@ -234,10 +235,6 @@ void updateTuioObject (TuioObject tobj) {
       o.setAngle(tobj.getAngle());
     }
 
-    if (contains(id, gateIds)) {
-      //now that output of a gate is a Bit
-    }
-  }
   for (LogicGate gate : gateList) {
     if (checkInputsWithinRange(gate, bitList)) {
       ArrayList<Bit> inputBits = new ArrayList<Bit>();
@@ -257,12 +254,15 @@ void updateTuioObject (TuioObject tobj) {
   bitListAndOutputs.addAll(bitList);
   bitListAndOutputs.addAll(outputBits);
   propogateOutputs(gateList, bitListAndOutputs, 1);
+    }
 }
 
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
   Bit bitToRemove = new Bit();
+  LogicGate gateToRemove = new AndGate();
+  
   synchronized(objects) {
     if (objects.containsKey(id)) {
       objects.remove(id);
@@ -272,11 +272,19 @@ void removeTuioObject(TuioObject tobj) {
         bitToRemove = bit;
       }
     }
-
     if (bitToRemove.id != -1) {
-      //this and adding need work(maybe use proximity based)
       bitList.remove(bitToRemove);
     }
+    bitToRemove = null;
+    
+    for(LogicGate gate: gateList){
+      if (gate.id == id){
+        gateToRemove = gate;
+      }
+    }
+    gateToRemove.destroyOutput();
+    gateList.remove(gateToRemove);
+    gateToRemove = null;
   }
 }
 

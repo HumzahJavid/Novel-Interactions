@@ -3,6 +3,7 @@ abstract class LogicGate extends DetectedObject {
   Bit input1;
   Bit input2;
   Bit output;
+  int id;
 
   LogicGate() {
     rectCol=color(255, 50, 50);
@@ -30,6 +31,7 @@ abstract class LogicGate extends DetectedObject {
   }
 
   abstract void blankOutput();
+  abstract void destroyOutput();
   //not abstract because a Not gate shouldn't (implement the function which) gives an output based on Two input bits
   Bit output(Bit bit1) {
     return bit1;

@@ -52,7 +52,11 @@ class NotGate extends LogicGate {
       return bit1; //-1
     }
   }
-
+  
+  void destroyOutput(){
+    output = null;
+  }
+  
   void drawLineToInputs() {
     stroke(rectCol);
     if (input1.value != -1) {

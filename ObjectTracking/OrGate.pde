@@ -44,6 +44,10 @@ class OrGate extends LogicGate {
     outputBit.setValue(bit1.value | bit2.value);
     return outputBit;
   }
+  
+  void destroyOutput(){
+    output = null;
+  }
 
   void drawLineToInputs() {
     stroke(rectCol);
