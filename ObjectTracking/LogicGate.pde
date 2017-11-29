@@ -33,6 +33,7 @@ abstract class LogicGate extends DetectedObject {
   abstract void blankOutput();
   abstract void destroyOutput();
   abstract boolean inUse();
+  abstract boolean inputsStillInRange();
   //not abstract because a Not gate shouldn't (implement the function which) gives an output based on Two input bits
   Bit output(Bit bit1) {
     return bit1;

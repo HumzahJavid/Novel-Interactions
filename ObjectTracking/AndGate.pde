@@ -85,6 +85,36 @@ class AndGate extends LogicGate {
   boolean inUse(){
     return (input1.value != -1);
   }
+  
+  public boolean inputsStillInRange(){
+    return (inputInRange(input1) && inputInRange(input2));
+  }
+
+  private boolean inputInRange(Bit input) {
+    return (inputWithinXRange(input) && inputWithinYRange(input));
+  }
+
+  private boolean inputWithinXRange(Bit input) {
+    float xMin = this.getX() - 100;
+    float xMax = this.getX();
+    float xBit = input.getX();
+    if ((xBit >= xMin)&&(xBit <= xMax)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean inputWithinYRange(Bit input) {
+    float yMin = this.getY() - 100;
+    float yMax = this.getY() + this.size + 100;
+    float yBit = input.getY();
+    if ((yBit >= yMin)&&(yBit <= yMax)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   Bit output(Bit bit1, Bit bit2) {
     updateInputs(bit1, bit2);

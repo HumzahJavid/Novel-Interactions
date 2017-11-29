@@ -1,3 +1,10 @@
+//issue#5 part 2 fix introduced bug where an already connected gate 
+//when moved disconnects from inputs (even if they are and were in range)
+//caused by original updateTuio which detects gates doesn't have any Bits in range, so it runs gate.blankOutput()
+//fixed by testing whether a gate is full, if full then do not get new inputs for it (prevented from clearing output) 
+
+//above fix introduced new bug where gates are permanently connected to inputs (only way to clear it is to take gate out of view)
+//caused by not checking whether the inputs are still in range
 import TUIO.*;
 import java.util.Map;
 import java.util.Collections;
@@ -63,37 +70,32 @@ public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitL
   boolean gateInputsAssigned = gate.inUse();
   //if the bit is assigned to a gate
   boolean assignedToGate;
-
-  if (!gateInputsAssigned) {
-    for (Bit bit : bitList) {
-      float xBit = bit.getX();
-      float yBit = bit.getY();
-      assignedToGate = (gate.input1 == bit || gate.input2 == bit);
-      if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit) && !assignedToGate) {
-        bitsDetected += 1;
-      }
+  
+  for (Bit bit : bitList) {
+    float xBit = bit.getX();
+    float yBit = bit.getY();
+    assignedToGate = (gate.input1 == bit || gate.input2 == bit);
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit) && !assignedToGate && !gateInputsAssigned) {
+      bitsDetected += 1;
     }
-    if (gate instanceof NotGate) {
-      if (bitsDetected == 1) {
-        return true;
-      } else {
-        return false;
-      }
+  }
+  if (gate instanceof NotGate) {
+    if (bitsDetected == 1) {
+      return true;
     } else {
-      if (bitsDetected == 2) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
     }
   } else {
-    //the gate is in use (prevent getBitsInRange from getting new inputs)
-    return false;
+    if (bitsDetected == 2) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
 public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitList) {
-  //returns all the 
+  //returns all the bits in proximity of the gate
   float xGate = gate.getX();
   float yGate = gate.getY();
   ArrayList<Bit> closeBits = new ArrayList<Bit>();
@@ -106,11 +108,10 @@ public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitLi
       closeBits.add(bit);
     }
   }
-
   return closeBits;
 }
 
-void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit> bitListAndOutputs, int num) {
+public static void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit> bitListAndOutputs, int num) {
   //Uses a combined list made up of the bitList and oldOutputs 
   //to produce a new set of outputs which are combined with the list and used in the next recursive call
   //recursive calls end when no new outputs are generated
@@ -121,10 +122,10 @@ void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit> bitListAndOu
       inputBits = getBitsInRange(gate, bitListAndOutputs);
 
       if (gate instanceof NotGate) {
-        System.out.println("Not gate has an input " + inputBits.get(0));
+        //System.out.println("Not gate has an input " + inputBits.get(0));
         newOutputBits.add(gate.output(inputBits.get(0)));
       } else {
-        System.out.println("not a not gate has an inputS " + inputBits.get(0) + " ..." + inputBits.get(1));
+        //System.out.println("not a not gate has an inputS " + inputBits.get(0) + " ..." + inputBits.get(1));
         newOutputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
       }
     }
@@ -245,8 +246,8 @@ void updateTuioObject (TuioObject tobj) {
     }
 
     for (LogicGate gate : gateList) {
+      //if the gate has inputs in range (and does not have inputs already assigned to it)
       if (checkInputsWithinRange(gate, bitList)) {
-        //if the gate has inputs in range (and does not have inputs already assigned to it)
         ArrayList<Bit> inputBits = new ArrayList<Bit>();
         inputBits = getBitsInRange(gate, bitList);
         //calculates output for the gate and add it to a list of outputBits
@@ -256,17 +257,16 @@ void updateTuioObject (TuioObject tobj) {
           outputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
         }
       } else if (gate.inUse()) {
-        //the gate was already assigned inputs so add the outputs to outputBits (for propogate outputs) 
-        //prevents output being cleared (blank output)
-        if (gate instanceof NotGate) {
+        if (gate.inputsStillInRange()){
           outputBits.add(gate.output);
         } else {
-          outputBits.add(gate.output);
+        //the inputs are not in range set output to blank
+          gate.blankOutput();
         }
       } else {
         //gate does not have inputs assigned and has no potential inputs in range, set output to blank (-1)
         gate.blankOutput();
-      };
+      }
     }  
     //with all newly created output bits need to check if any are in range of gates to be considered inputs 
     bitListAndOutputs.addAll(bitList);
