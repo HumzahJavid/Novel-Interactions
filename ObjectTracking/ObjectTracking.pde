@@ -1,10 +1,3 @@
-//issue#5 part 2 fix introduced bug where an already connected gate 
-//when moved disconnects from inputs (even if they are and were in range)
-//caused by original updateTuio which detects gates doesn't have any Bits in range, so it runs gate.blankOutput()
-//fixed by testing whether a gate is full, if full then do not get new inputs for it (prevented from clearing output) 
-
-//above fix introduced new bug where gates are permanently connected to inputs (only way to clear it is to take gate out of view)
-//caused by not checking whether the inputs are still in range
 import TUIO.*;
 import java.util.Map;
 import java.util.Collections;
