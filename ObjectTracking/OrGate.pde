@@ -15,7 +15,6 @@ class OrGate extends LogicGate {
   }
 
   void draw() {
-    //System.out.println(this);
     noFill();
     stroke(rectCol);
 
@@ -26,27 +25,15 @@ class OrGate extends LogicGate {
 
     fill(textCol);
     text(text, locX, locY);
-    //drawOutputText();
     updateOutput();
     drawLineToInputs();
     drawLineToOutput();
   }
 
-  public void blankOutput() {
-    input1 = new Bit("", -1);
-    input2 = new Bit("", -1);
-    updateOutput();
-  }
-
   Bit calculateOutput(Bit bit1, Bit bit2) {
-    //return (bit1.value | bit2.value);
     Bit outputBit = new Bit();
     outputBit.setValue(bit1.value | bit2.value);
     return outputBit;
-  }
-  
-  void destroyOutput(){
-    output = null;
   }
 
   void drawLineToInputs() {
@@ -83,40 +70,10 @@ class OrGate extends LogicGate {
     popMatrix();
   }
   
-  boolean inUse(){
-    return (input1.value != -1);
+  public boolean inputsStillInRange(){
+    return (super.inputInRange(input1) && super.inputInRange(input2));
   }
   
-public boolean inputsStillInRange(){
-    return (inputInRange(input1) && inputInRange(input2));
-  }
-
-  private boolean inputInRange(Bit input) {
-    return (inputWithinXRange(input) && inputWithinYRange(input));
-  }
-
-  private boolean inputWithinXRange(Bit input) {
-    float xMin = this.getX() - 100;
-    float xMax = this.getX();
-    float xBit = input.getX();
-    if ((xBit >= xMin)&&(xBit <= xMax)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private boolean inputWithinYRange(Bit input) {
-    float yMin = this.getY() - 100;
-    float yMax = this.getY() + this.size + 100;
-    float yBit = input.getY();
-    if ((yBit >= yMin)&&(yBit <= yMax)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   Bit output(Bit bit1, Bit bit2) {
     updateInputs(bit1, bit2);
     return updateOutput();
