@@ -87,6 +87,10 @@ class NotGate extends LogicGate {
     popMatrix();
   }
 
+  boolean inUse() {
+    return (input1.value != -1);
+  }
+
   Bit output(Bit bit1) {
     updateInputs(bit1);
     return updateOutput();

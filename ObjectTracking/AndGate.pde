@@ -82,6 +82,10 @@ class AndGate extends LogicGate {
     popMatrix();
   }
 
+  boolean inUse(){
+    return (input1.value != -1);
+  }
+
   Bit output(Bit bit1, Bit bit2) {
     updateInputs(bit1, bit2);
     return updateOutput();

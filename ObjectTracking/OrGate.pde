@@ -82,6 +82,10 @@ class OrGate extends LogicGate {
     text(""+output, 0, 0);
     popMatrix();
   }
+  
+  boolean inUse(){
+    return (input1.value != -1);
+  }
 
   Bit output(Bit bit1, Bit bit2) {
     updateInputs(bit1, bit2);
