@@ -71,13 +71,6 @@ class DetectedObject {
   }
   
   String toString() {
-    return " rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " rad: " + rad
-      + " TrackedObject type: DetectedObject";
+    return " rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " rad: " + rad;
   }
-/*
-  String toString() {
-    return " id: " + id + " value: " + value +  
-      "\n rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " angle " + angle + " width: " + width + " height" + height + " rad: " + rad
-      + " TrackedObject type: DetectedObject";
-  }*/
 }

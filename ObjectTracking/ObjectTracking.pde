@@ -15,8 +15,9 @@ LogicGate and1;
 LogicGate or1;
 LogicGate not1;
 ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
-//and, or, not, .... xor nand nor nxor 
+
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+//and, or, not, .... xor nand nor nxor 
 int gateIds[] = {30, 31, 32};
 
 void setup()
@@ -34,11 +35,9 @@ void draw()
 {
   background(255);
   synchronized(objects) {
+    //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
     for (DetectedObject to : objects.values()) {
       to.draw();
-    }
-    for (LogicGate lg : gateList) {
-      lg.draw();
     }
   }
 }
@@ -60,11 +59,16 @@ public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitL
   float xGate = gate.getX();
   float yGate = gate.getY();
   int bitsDetected = 0;
-
+  //if the gate has inputs assigned(inputs are full)
+  boolean gateInputsAssigned = gate.inUse();
+  //if the bit is assigned to a gate
+  boolean assignedToGate;
+  
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)) {
+    assignedToGate = (gate.input1 == bit || gate.input2 == bit);
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit) && !assignedToGate && !gateInputsAssigned) {
       bitsDetected += 1;
     }
   }
@@ -84,20 +88,50 @@ public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitL
 }
 
 public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitList) {
-  //returns all the 
+  //returns all the bits in proximity of the gate
   float xGate = gate.getX();
   float yGate = gate.getY();
   ArrayList<Bit> closeBits = new ArrayList<Bit>();
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
-
-    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit)) {
+    boolean assignedToGate;
+    assignedToGate = (gate.input1 == bit || gate.input2 == bit);
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit) && !assignedToGate) {
       closeBits.add(bit);
     }
   }
-
   return closeBits;
+}
+
+public static void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit> bitListAndOutputs, int num) {
+  //Uses a combined list made up of the bitList and oldOutputs 
+  //to produce a new set of outputs which are combined with the list and used in the next recursive call
+  //recursive calls end when no new outputs are generated
+  ArrayList<Bit> newOutputBits = new ArrayList<Bit>();
+  for (LogicGate gate : gateList) {
+    if (checkInputsWithinRange(gate, bitListAndOutputs)) {
+      ArrayList<Bit> inputBits = new ArrayList<Bit>();
+      inputBits = getBitsInRange(gate, bitListAndOutputs);
+
+      if (gate instanceof NotGate) {
+        //System.out.println("Not gate has an input " + inputBits.get(0));
+        newOutputBits.add(gate.output(inputBits.get(0)));
+      } else {
+        //System.out.println("not a not gate has an inputS " + inputBits.get(0) + " ..." + inputBits.get(1));
+        newOutputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
+      }
+    }
+  }
+
+  if (newOutputBits.size() > 0) {
+    bitListAndOutputs.addAll(newOutputBits);
+    //System.out.println("new bitlist size " + bitListAndOutputs.size());
+    propogateOutputs(gateList, bitListAndOutputs, num+1);
+  } else {
+    //System.out.println("ending propogateOutputs at call # " + num);
+    bitListAndOutputs.clear();
+  }
 }
 
 public static boolean withinXRange(float xGate, int gateWidth, float xBit) {
@@ -163,8 +197,7 @@ void addTuioObject(TuioObject tobj) {
     if (o instanceof Bit) {
       bitList.add(o);
     }
-  }
-  else if (contains(id, gateIds)) {
+  } else if (contains(id, gateIds)) {
     //if the id is that of a logicGate, create the corresponding logic gate (o) 
     //add o to the object hashmap and the gateList arraylist 
     LogicGate o;
@@ -184,6 +217,7 @@ void addTuioObject(TuioObject tobj) {
     }
     o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
     o.size = 50;
+    o.id = id;
     objects.put(id, o);
     if (o instanceof LogicGate) {
       gateList.add(o);
@@ -194,35 +228,54 @@ void addTuioObject(TuioObject tobj) {
 // called when an object is moved
 void updateTuioObject (TuioObject tobj) {
   int id = tobj.getSymbolID();
+  ArrayList<Bit> outputBits = new ArrayList<Bit>();
+  ArrayList<Bit> bitListAndOutputs = new ArrayList<Bit>();
+
   synchronized(objects) {
     if (objects.containsKey(id)) {
-
       DetectedObject o = objects.get(id);
       o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
       o.setAngle(tobj.getAngle());
     }
-  }
-  for (LogicGate gate : gateList) {
-    if (checkInputsWithinRange(gate, bitList)) {
-      ArrayList<Bit> inputBits = new ArrayList<Bit>();
-      inputBits = getBitsInRange(gate, bitList);
-      //calculates output for the gate
-      if (gate instanceof NotGate) {
-        gate.output(inputBits.get(0));
+
+    for (LogicGate gate : gateList) {
+      //if the gate has inputs in range (and does not have inputs already assigned to it)
+      if (checkInputsWithinRange(gate, bitList)) {
+        ArrayList<Bit> inputBits = new ArrayList<Bit>();
+        inputBits = getBitsInRange(gate, bitList);
+        //calculates output for the gate and add it to a list of outputBits
+        if (gate instanceof NotGate) {
+          outputBits.add(gate.output(inputBits.get(0)));
+        } else {
+          outputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
+        }
+      } else if (gate.inUse()) {
+        if (gate.inputsStillInRange()){
+          outputBits.add(gate.output);
+        } else {
+        //the inputs are not in range set output to blank
+          gate.blankOutput();
+        }
       } else {
-        gate.output(inputBits.get(0), inputBits.get(1));
+        //gate does not have inputs assigned and has no potential inputs in range, set output to blank (-1)
+        gate.blankOutput();
       }
-    } else {
-      //input no longer being detected set output to blank (-1)
-      gate.blankOutput();
-    };
+    }  
+    //with all newly created output bits need to check if any are in range of gates to be considered inputs 
+    bitListAndOutputs.addAll(bitList);
+    bitListAndOutputs.addAll(outputBits);
+    if (outputBits.size() != 0) {
+      propogateOutputs(gateList, bitListAndOutputs, 1);
+    }
   }
 }
 
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
-  TrackedObject bitToRemove = new Bit();
+  Bit bitToRemove = new Bit();
+  LogicGate gateToRemove = new AndGate();
+
   synchronized(objects) {
     if (objects.containsKey(id)) {
       objects.remove(id);
@@ -232,11 +285,19 @@ void removeTuioObject(TuioObject tobj) {
         bitToRemove = bit;
       }
     }
-
     if (bitToRemove.id != -1) {
-      //this and adding need work(maybe use proximity based)
       bitList.remove(bitToRemove);
     }
+    bitToRemove = null;
+
+    for (LogicGate gate : gateList) {
+      if (gate.id == id) {
+        gateToRemove = gate;
+      }
+    }
+    gateToRemove.destroyOutput();
+    gateList.remove(gateToRemove);
+    gateToRemove = null;
   }
 }
 
