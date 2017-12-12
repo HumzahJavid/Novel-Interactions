@@ -3,7 +3,7 @@ class Binary extends DetectedObject {
   int width=height*2;
   int locX = width / 2;
   int locY = height / 2;
-  String text = "_ _ _ _";
+  String text = "";
 
   private final int MAXIMUM_LENGTH;
   ArrayList<TrackedObject> bits = new ArrayList<TrackedObject>();
@@ -39,6 +39,7 @@ class Binary extends DetectedObject {
     pushMatrix();
     translate(locX, locY);
     rect(0, 0, width, height, rad, rad, rad, rad);
+    rect(0, 250, width, height, rad, rad, rad, rad);
     popMatrix();
     updateText();
     fill(textCol);
@@ -107,6 +108,19 @@ class Binary extends DetectedObject {
     //but starts filling from the most signifcant bit 
     //updatedText = updatedText.reverse();
     text = updatedText.toString();
+    
+    
+    //Show bits/binary number
+    System.out.println(text);
+    int empty = 0;
+    for (int i = length - 1; i > -1; i-=2) {
+        if (text.charAt(i) == '1' || text.charAt(i) == '0') {
+          System.out.println("hi" + Integer.parseInt(text,2));
+          //to exit the loop
+          i = -1;
+        }
+      }
+    
   }
 
   int size() {
