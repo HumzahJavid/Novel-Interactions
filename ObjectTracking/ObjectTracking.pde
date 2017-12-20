@@ -18,7 +18,7 @@ ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
 
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 //and, or, not, .... xor nand nor nxor 
-int gateIds[] = {30, 31, 32};
+int gateIds[] = {30, 31, 32, 33};
 
 void setup()
 {
@@ -211,6 +211,9 @@ void addTuioObject(TuioObject tobj) {
     case 32:
       o = new NotGate();
       break;
+    case 33:
+      o = new XOrGate();
+      break;
     default:
       o = new AndGate();
       break;
@@ -249,7 +252,7 @@ void updateTuioObject (TuioObject tobj) {
         } else {
           outputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
         }
-      } else if (gate.inUse()) {
+      } else if (gate.inUse() && bitList.contains(gate.input1)) {
         if (gate.inputsStillInRange()){
           outputBits.add(gate.output);
         } else {

@@ -17,33 +17,63 @@ abstract class LogicGate extends DetectedObject {
     locY = y;
   }
 
-  void draw() {
-    noFill();
-    stroke(rectCol);
+  abstract void draw();
+   
+  void blankOutput() {
+    input1 = new Bit("", -1);
+    input2 = new Bit("", -1);
+    //will call the sub class implementation
+    updateOutput();
+  }
+  
+  abstract void drawLineToInputs();
+  abstract void drawLineToOutput();
+  
+  void destroyOutput(){
+    output = null;
+  }
+  
+  abstract void drawOutputText();
+  abstract boolean inputsStillInRange();
 
-    pushMatrix();
-    translate(locX, locY);
-    rect(0, 0, size, size, rad, rad, rad, rad);
-    popMatrix();
-
-    fill(textCol);
-    text(text, locX, locY);
+  protected boolean inputInRange(Bit input) {
+    return (inputWithinXRange(input) && inputWithinYRange(input));
   }
 
-  abstract void blankOutput();
-  abstract void destroyOutput();
-  abstract boolean inUse();
-  abstract boolean inputsStillInRange();
+  protected boolean inputWithinXRange(Bit input) {
+    float xMin = this.getX() - 100;
+    float xMax = this.getX();
+    float xBit = input.getX();
+    if ((xBit >= xMin)&&(xBit <= xMax)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  protected boolean inputWithinYRange(Bit input) {
+    float yMin = this.getY() - 100;
+    float yMax = this.getY() + this.size + 100;
+    float yBit = input.getY();
+    if ((yBit >= yMin)&&(yBit <= yMax)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+    
+  boolean inUse(){
+    return (input1.value != -1);
+  }
+  
   //not abstract because a Not gate shouldn't (implement the function which) gives an output based on Two input bits
   Bit output(Bit bit1) {
     return bit1;
   };
+  
   Bit output(Bit bit1, Bit bit2) {
     return bit1;
   };
 
-  String toString() {
-    return "\n rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " size: " + size
-      + " Bit type: LogicGate";
-  }
+  abstract Bit updateOutput();
 }

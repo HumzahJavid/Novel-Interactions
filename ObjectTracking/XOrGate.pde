@@ -1,12 +1,12 @@
-class OrGate extends LogicGate {
-  String text = "OR";
-  OrGate() {
+class XOrGate extends LogicGate {
+  String text = "XOR";
+  XOrGate() {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     blankOutput();
   }
 
-  OrGate(int x, int y) {
+  XOrGate(int x, int y) {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     locX = x;
@@ -32,7 +32,15 @@ class OrGate extends LogicGate {
 
   Bit calculateOutput(Bit bit1, Bit bit2) {
     Bit outputBit = new Bit();
-    outputBit.setValue(bit1.value | bit2.value);
+    int outputValue;
+    if (bit1.value != bit2.value){
+      outputValue = 1;
+    } else if(bit1.value == -1) {
+      outputValue = -1;
+    } else {
+      outputValue = 0;
+    }
+    outputBit.setValue(outputValue);
     return outputBit;
   }
 
@@ -69,7 +77,7 @@ class OrGate extends LogicGate {
     text(""+output, 0, 0);
     popMatrix();
   }
-  
+
   public boolean inputsStillInRange(){
     return (super.inputInRange(input1) && super.inputInRange(input2));
   }
@@ -96,6 +104,6 @@ class OrGate extends LogicGate {
   }
 
   String toString() {
-    return "\n input1: " + input1 + " input2: " + input2 + " output: " + output + "Logic gate type: Or";
+    return "\n input1: " + input1 + " input2: " + input2 + " output: " + output + "Logic gate type: XOr";
   }
 }
