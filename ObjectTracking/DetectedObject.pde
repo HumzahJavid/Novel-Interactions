@@ -1,4 +1,5 @@
 class DetectedObject {
+  float angle=0;
   color rectCol;
   color textCol;
 
@@ -27,11 +28,16 @@ class DetectedObject {
 
     pushMatrix();
     translate(locX, locY);
+    rotate(angle);
     rect(0, 0, 60, 60, rad, rad, rad, rad);
     popMatrix();
 
     fill(textCol);
     text(text, locX, locY);
+  }
+  
+  float getAngle() {
+    return this.angle;
   }
 
   String getText() {
@@ -44,6 +50,10 @@ class DetectedObject {
 
   int getY() {
     return this.locY;
+  }
+  
+  void setAngle(float a) {
+    angle=a;
   }
 
   void setPos(int x, int y) {
@@ -61,13 +71,6 @@ class DetectedObject {
   }
   
   String toString() {
-    return " rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " rad: " + rad
-      + " TrackedObject type: DetectedObject";
+    return " rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " rad: " + rad;
   }
-/*
-  String toString() {
-    return " id: " + id + " value: " + value +  
-      "\n rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " angle " + angle + " width: " + width + " height" + height + " rad: " + rad
-      + " TrackedObject type: DetectedObject";
-  }*/
 }

@@ -7,13 +7,18 @@ import java.util.Comparator;
 TuioProcessing tuioClient;
 
 PFont font;
-public static int temp = 0;
 //stores all the detected bits
-ArrayList<TrackedObject> bitList = new ArrayList<TrackedObject>();
-Binary binary1 = new Binary(4);
-Binary binary2 = new Binary(4, 1000-60, 30);
-Map <Integer, TrackedObject> objects = 
-  Collections.synchronizedMap(new HashMap<Integer, TrackedObject>());
+ArrayList<Bit> bitList = new ArrayList<Bit>();
+Map <Integer, DetectedObject> objects = 
+  Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
+LogicGate and1;
+LogicGate or1;
+LogicGate not1;
+ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
+
+int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+//and, or, not, .... xor nand nor nxor 
+int gateIds[] = {30, 31, 32, 33};
 
 void setup()
 {
@@ -28,39 +33,135 @@ void setup()
 
 void draw()
 {
-  binary1.sort(comp);
   background(255);
   synchronized(objects) {
-    for (TrackedObject to : objects.values()) {
+    //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
+    for (DetectedObject to : objects.values()) {
       to.draw();
     }
   }
-
-  binary1.draw();
-  binary2.draw();
 }
 
-Comparator<TrackedObject> comp = new Comparator<TrackedObject>() {
-  // Comparator object to compare two TuioObjects on the basis of their x position
-  // Returns -1 if o1 left of o2; 0 if they have same x pos; 1 if o1 right of o2
-
-  // allows us to sort objects left-to-right.
-  public int compare(TrackedObject o1, TrackedObject o2) {
-    if (o1.getX()<o2.getX()) { 
-      return -1;
-    } else if (o1.getX()>o2.getX()) { 
-      return 1;
-    } else { 
-      return 0;
+public static boolean contains(int element, int[] arr) {
+  //returns true if the element "element" is is in the array "arr"  
+  boolean contained = false;
+  for (int i = 0; i < arr.length; i++) {
+    if (element == arr[i]) {
+      contained = true;
     }
   }
-};
+  return contained;
+}
+
+public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitList) {
+  //checks the distance between the gate and all detected bits 
+  //if 2 bits are within xrange of the gate then return true
+  float xGate = gate.getX();
+  float yGate = gate.getY();
+  int bitsDetected = 0;
+  //if the gate has inputs assigned(inputs are full)
+  boolean gateInputsAssigned = gate.inUse();
+  //if the bit is assigned to a gate
+  boolean assignedToGate;
+  
+  for (Bit bit : bitList) {
+    float xBit = bit.getX();
+    float yBit = bit.getY();
+    assignedToGate = (gate.input1 == bit || gate.input2 == bit);
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit) && !assignedToGate && !gateInputsAssigned) {
+      bitsDetected += 1;
+    }
+  }
+  if (gate instanceof NotGate) {
+    if (bitsDetected == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if (bitsDetected == 2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+public static ArrayList<Bit> getBitsInRange(LogicGate gate, ArrayList<Bit> bitList) {
+  //returns all the bits in proximity of the gate
+  float xGate = gate.getX();
+  float yGate = gate.getY();
+  ArrayList<Bit> closeBits = new ArrayList<Bit>();
+  for (Bit bit : bitList) {
+    float xBit = bit.getX();
+    float yBit = bit.getY();
+    boolean assignedToGate;
+    assignedToGate = (gate.input1 == bit || gate.input2 == bit);
+    if (withinXRange(xGate, gate.size, xBit) && withinYRange(yGate, gate.size, yBit) && !assignedToGate) {
+      closeBits.add(bit);
+    }
+  }
+  return closeBits;
+}
+
+public static void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit> bitListAndOutputs, int num) {
+  //Uses a combined list made up of the bitList and oldOutputs 
+  //to produce a new set of outputs which are combined with the list and used in the next recursive call
+  //recursive calls end when no new outputs are generated
+  ArrayList<Bit> newOutputBits = new ArrayList<Bit>();
+  for (LogicGate gate : gateList) {
+    if (checkInputsWithinRange(gate, bitListAndOutputs)) {
+      ArrayList<Bit> inputBits = new ArrayList<Bit>();
+      inputBits = getBitsInRange(gate, bitListAndOutputs);
+
+      if (gate instanceof NotGate) {
+        //System.out.println("Not gate has an input " + inputBits.get(0));
+        newOutputBits.add(gate.output(inputBits.get(0)));
+      } else {
+        //System.out.println("not a not gate has an inputS " + inputBits.get(0) + " ..." + inputBits.get(1));
+        newOutputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
+      }
+    }
+  }
+
+  if (newOutputBits.size() > 0) {
+    bitListAndOutputs.addAll(newOutputBits);
+    //System.out.println("new bitlist size " + bitListAndOutputs.size());
+    propogateOutputs(gateList, bitListAndOutputs, num+1);
+  } else {
+    //System.out.println("ending propogateOutputs at call # " + num);
+    bitListAndOutputs.clear();
+  }
+}
+
+public static boolean withinXRange(float xGate, int gateWidth, float xBit) {
+  //check if object is within 100 of the left/right of the gate
+  float xMin = xGate - 100;
+  float xMax = xGate;// + gateWidth + 100;
+  if ((xBit >= xMin)&&(xBit <= xMax)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+public static boolean withinYRange(float yGate, int gateHeight, float yBit) {
+  //check if object is within 100 of the top of the gate or bottom of the gate
+  float yMin = yGate - 100;
+  float yMax = yGate + gateHeight + 100;
+  if ((yBit >= yMin)&&(yBit <= yMax)) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 void addTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
-  TrackedObject o = new Bit();
-  synchronized(objects) {
-    //no number objects added if array is full
+  if (contains(id, bitIds)) { 
+    Bit o = new Bit();
+    synchronized(objects) {
+      //no number objects added if array is full
       switch(id) {
 
       case 0:  
@@ -93,42 +194,81 @@ void addTuioObject(TuioObject tobj) {
     }
     o.size = 50;
     objects.put(id, o);
-
     if (o instanceof Bit) {
       bitList.add(o);
-      //if there are less than 5 bit object detected
-      if (bitList.size() < 5) {
-        binary1.add(o);
-        //else there are more than 4 bit objects detected
-      } else {
-        //if the second binary number is not full
-        if (binary1.size() >= 4 && binary2.size() < 4) {
-          System.out.println("binary1 is full size:" + binary1.size());
-
-          System.out.println("binary2 is at size:" + binary2.size());
-          System.out.println("adding object to b2");
-          binary2.add(o);
-          //else do not add any bits to either binary object
-        } else {
-          System.out.println("binary1 is AT size:" + binary1.size());
-
-          System.out.println("binary2 is at size:" + binary2.size());
-          System.out.println("ISSUE");
-        }
-      } //end if else bitlist < 5
-    }// end if o is Bit
-  //}//end sync
+    }
+  } else if (contains(id, gateIds)) {
+    //if the id is that of a logicGate, create the corresponding logic gate (o) 
+    //add o to the object hashmap and the gateList arraylist 
+    LogicGate o;
+    switch (id) {
+    case 30:
+      o = new AndGate();
+      break;
+    case 31:
+      o = new OrGate();
+      break;
+    case 32:
+      o = new NotGate();
+      break;
+    case 33:
+      o = new XOrGate();
+      break;
+    default:
+      o = new AndGate();
+      break;
+    }
+    o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
+    o.size = 50;
+    o.id = id;
+    objects.put(id, o);
+    if (o instanceof LogicGate) {
+      gateList.add(o);
+    }
+  };
 }
 
 // called when an object is moved
 void updateTuioObject (TuioObject tobj) {
   int id = tobj.getSymbolID();
+  ArrayList<Bit> outputBits = new ArrayList<Bit>();
+  ArrayList<Bit> bitListAndOutputs = new ArrayList<Bit>();
+
   synchronized(objects) {
     if (objects.containsKey(id)) {
-
-      TrackedObject o = objects.get(id);
+      DetectedObject o = objects.get(id);
       o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
       o.setAngle(tobj.getAngle());
+    }
+
+    for (LogicGate gate : gateList) {
+      //if the gate has inputs in range (and does not have inputs already assigned to it)
+      if (checkInputsWithinRange(gate, bitList)) {
+        ArrayList<Bit> inputBits = new ArrayList<Bit>();
+        inputBits = getBitsInRange(gate, bitList);
+        //calculates output for the gate and add it to a list of outputBits
+        if (gate instanceof NotGate) {
+          outputBits.add(gate.output(inputBits.get(0)));
+        } else {
+          outputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
+        }
+      } else if (gate.inUse() && bitList.contains(gate.input1)) {
+        if (gate.inputsStillInRange()){
+          outputBits.add(gate.output);
+        } else {
+        //the inputs are not in range set output to blank
+          gate.blankOutput();
+        }
+      } else {
+        //gate does not have inputs assigned and has no potential inputs in range, set output to blank (-1)
+        gate.blankOutput();
+      }
+    }  
+    //with all newly created output bits need to check if any are in range of gates to be considered inputs 
+    bitListAndOutputs.addAll(bitList);
+    bitListAndOutputs.addAll(outputBits);
+    if (outputBits.size() != 0) {
+      propogateOutputs(gateList, bitListAndOutputs, 1);
     }
   }
 }
@@ -136,38 +276,32 @@ void updateTuioObject (TuioObject tobj) {
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
-  TrackedObject bitToRemove = new Bit();
+  Bit bitToRemove = new Bit();
+  LogicGate gateToRemove = new AndGate();
+
   synchronized(objects) {
     if (objects.containsKey(id)) {
       objects.remove(id);
     }
-    for (TrackedObject bit : bitList) {
+    for (Bit bit : bitList) {
       if (bit.id == id) {
         bitToRemove = bit;
       }
     }
-
     if (bitToRemove.id != -1) {
-      //this and adding need work(maybe use proximity based)
       bitList.remove(bitToRemove);
-      if (binary1.contains(bitToRemove)) {
-        binary1.remove(bitToRemove);
-      } else {
-        binary2.remove(bitToRemove);
+    }
+    bitToRemove = null;
+
+    for (LogicGate gate : gateList) {
+      if (gate.id == id) {
+        gateToRemove = gate;
       }
     }
+    gateToRemove.destroyOutput();
+    gateList.remove(gateToRemove);
+    gateToRemove = null;
   }
-}
-
-public boolean contains(int element, int[] arr) {
-  //returns true if the element "element" is is in the array "arr"  
-  boolean contained = false;
-  for (int i = 0; i < arr.length; i++) {
-    if (element == arr[i]) {
-      contained = true;
-    }
-  }
-  return contained;
 }
 
 //for debug purposes
