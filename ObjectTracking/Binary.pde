@@ -25,7 +25,7 @@ class Binary extends DetectedObject {
   }
 
   public Binary(ArrayList<Bit> bits1) {
-    
+
     println("created binay obj " + bits1);
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
@@ -33,10 +33,13 @@ class Binary extends DetectedObject {
     this.bits.addAll(bits1);
     locX = width / 2;
     locY = height / 2;
-    
+
     updateText();
     conversion();
     println(this.decimalString, this.hexString);
+    color textCol=color(50, 50, 50);
+    fill(textCol);
+    text("Denary: " + decimalString + " | Hex: " + hexString, bits.get(0).getX()+135,bits.get(0).getY()-80);
   }
 
   public void conversion() {
@@ -101,9 +104,9 @@ class Binary extends DetectedObject {
     //will not need to run this until the binary number values(# bits) are full
     println("UPDATETEXT START");
     println(bits);
-    
+
     String updatedText = "";
-    
+
     for (Bit bit : this.bits) {
       updatedText+= bit.value;
       println("bit value: " + bit.value);
@@ -111,7 +114,7 @@ class Binary extends DetectedObject {
     this.text = updatedText;
     println("Updatedtext: " + updatedText);
   }
-      
+
 
   int size() {
     return bits.size();
