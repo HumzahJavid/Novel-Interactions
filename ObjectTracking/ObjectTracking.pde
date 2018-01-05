@@ -13,6 +13,9 @@ ArrayList<Bit> bitList = new ArrayList<Bit>();
 ArrayList<Bit> binaryOne = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
 
+ArrayList<Bit> binaryOneTemp = new ArrayList<Bit>();
+ArrayList<Bit> binaryTwoTemp = new ArrayList<Bit>();
+
 Map <Integer, DetectedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
 LogicGate and1;
@@ -36,18 +39,18 @@ void setup() {
 
 void addBinary() {
   if (bitList.size() > 3) {
-    binaryOne.clear();
+    binaryOneTemp.clear();
     Collections.sort(bitList, compX);
     for (int i = 0; i < 4; i++) {
-      binaryOne.add(bitList.get(i));
+      binaryOneTemp.add(bitList.get(i));
     }
     //System.out.println("Binary One " + binaryOne);
     drawRectOne();
   }
   if (bitList.size() > 7){
-    binaryTwo.clear();
+    binaryTwoTemp.clear();
     for (int i = 0, j = 4; i < 4; i++, j++) {
-      binaryTwo.add(bitList.get(j));
+      binaryTwoTemp.add(bitList.get(j));
     }
     drawRectTwo();
   }
@@ -56,7 +59,7 @@ void addBinary() {
 void drawRectOne() {
   ArrayList<Bit> binaryOneClone = new ArrayList<Bit>();
   binaryOneClone.clear();
-  binaryOneClone.addAll(binaryOne);
+  binaryOneClone.addAll(binaryOneTemp);
   Collections.sort(binaryOneClone, compY);
   
   int binOneFirst = bitList.get(0).getX();
@@ -64,6 +67,8 @@ void drawRectOne() {
   int binOneYFirst = binaryOneClone.get(0).getY();
   int binOneYLast = binaryOneClone.get(3).getY();
   if (binOneLast - binOneFirst < 350  && binOneYLast - binOneYFirst < 75) {
+    binaryOne.clear();
+    binaryOne.addAll(binaryOneTemp);
     rectMode(CENTER);
     pushMatrix();
     rectMode(CORNER);
@@ -77,7 +82,7 @@ void drawRectOne() {
 void drawRectTwo() {
   ArrayList<Bit> binaryTwoClone = new ArrayList<Bit>();
   binaryTwoClone.clear();
-  binaryTwoClone.addAll(binaryTwo);
+  binaryTwoClone.addAll(binaryTwoTemp);
   Collections.sort(binaryTwoClone, compY);
   
   int binTwoFirst = bitList.get(4).getX();
@@ -85,6 +90,8 @@ void drawRectTwo() {
   int binTwoYFirst = binaryTwoClone.get(0).getY();
   int binTwoYLast = binaryTwoClone.get(3).getY();
   if (binTwoLast - binTwoFirst < 350 && binTwoYLast - binTwoYFirst < 75) {
+    binaryTwo.clear();
+    binaryTwo.addAll(binaryTwoTemp);
     rectMode(CENTER);
     pushMatrix();
     rectMode(CORNER);
