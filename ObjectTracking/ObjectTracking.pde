@@ -34,7 +34,7 @@ void setup(){
   tuioClient  = new TuioProcessing(this);
 }
 
-void drawRect(){
+void addBinary(){
   if(bitList.size() > 3){
     binaryOne.clear();
     Collections.sort(bitList, comp);
@@ -53,6 +53,23 @@ void drawRect(){
   }
 }
 
+void drawRect(){
+  if(bitList.size() > 3){
+    int binOneFirst = bitList.get(0).getX();
+    int binOneLast = bitList.get(3).getX();
+    int binOneY = bitList.get(1).getY();
+    if(binOneLast - binOneFirst < 400){
+      rectMode(CENTER);
+      pushMatrix();
+      rectMode(CORNER);
+      noFill();
+      rect(binOneFirst - 50,binOneY - 50, binOneLast - binOneFirst + 100, 100, 10);
+      popMatrix();
+      rectMode(CENTER);
+    }
+  }
+}
+
 void draw(){
   background(255);
   synchronized(objects) {
@@ -61,6 +78,7 @@ void draw(){
       to.draw();
     }
   }
+  addBinary();
   drawRect();
 }
 
