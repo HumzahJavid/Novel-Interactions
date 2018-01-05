@@ -9,6 +9,10 @@ TuioProcessing tuioClient;
 PFont font;
 //stores all the detected bits
 ArrayList<Bit> bitList = new ArrayList<Bit>();
+
+ArrayList<Bit> binaryOne = new ArrayList<Bit>();
+ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
+
 Map <Integer, DetectedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
 LogicGate and1;
@@ -20,8 +24,7 @@ int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 //and, or, not, .... xor nand nor nxor 
 int gateIds[] = {30, 31, 32, 33};
 
-void setup()
-{
+void setup(){
   size(1000, 650);
   textSize(30);
 
@@ -31,8 +34,26 @@ void setup()
   tuioClient  = new TuioProcessing(this);
 }
 
-void draw()
-{
+void drawRect(){
+  if(bitList.size() > 3){
+    binaryOne.clear();
+    Collections.sort(bitList, comp);
+    for(int i = 0; i < 4; i++){
+      binaryOne.add(bitList.get(i));
+    }
+    System.out.println("Binary One " + binaryOne);
+  }
+  
+  if(bitList.size() > 7){
+    binaryTwo.clear();
+    for(int i = 0, j = 4; i < 4; i++, j++){
+      binaryTwo.add(bitList.get(j));
+    }
+    System.out.println("Binary Two " + binaryTwo);
+  }
+}
+
+void draw(){
   background(255);
   synchronized(objects) {
     //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
@@ -40,6 +61,7 @@ void draw()
       to.draw();
     }
   }
+  drawRect();
 }
 
 public static boolean contains(int element, int[] arr) {
@@ -303,6 +325,14 @@ void removeTuioObject(TuioObject tobj) {
     gateToRemove = null;
   }
 }
+
+Comparator<Bit> comp = new Comparator<Bit>() {
+  public int compare(Bit o1, Bit o2) {
+    if (o1.getX()<o2.getX()) { return -1;}
+    else if (o1.getX()>o2.getX()) { return 1; } 
+    else { return 0; }
+  }
+};
 
 //for debug purposes
 public static void printArr(int[][] arr) {
