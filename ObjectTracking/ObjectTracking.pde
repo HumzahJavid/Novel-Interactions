@@ -12,6 +12,7 @@ ArrayList<Bit> bitList = new ArrayList<Bit>();
 
 ArrayList<Bit> binaryOne = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
+Binary test;
 
 ArrayList<Bit> binaryOneTemp = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwoTemp = new ArrayList<Bit>();
@@ -44,8 +45,11 @@ void addBinary() {
     for (int i = 0; i < 4; i++) {
       binaryOneTemp.add(bitList.get(i));
     }
-    //System.out.println("Binary One " + binaryOne);
+
+    System.out.println("Binary One is " + binaryOne);
     drawRectOne();
+    test = new Binary(binaryOne);
+    
   }
   if (bitList.size() > 7){
     binaryTwoTemp.clear();
