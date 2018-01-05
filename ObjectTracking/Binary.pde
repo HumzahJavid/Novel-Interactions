@@ -3,7 +3,9 @@ class Binary extends DetectedObject {
   int width=height*2;
   int locX = width / 2;
   int locY = height / 2;
-  String text = "_ _ _ _";
+  String text = "";
+  String decimalString;
+  String hexString;
 
   private final int MAXIMUM_LENGTH;
   ArrayList<Bit> bits = new ArrayList<Bit>();
@@ -22,13 +24,32 @@ class Binary extends DetectedObject {
     locY = y;
   }
 
-  public Binary(ArrayList<Bit> bits) {
+  public Binary(ArrayList<Bit> bits1) {
+
+    println("created binay obj " + bits1);
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    bits.addAll(bits);
+    this.bits.addAll(bits1);
     locX = width / 2;
     locY = height / 2;
+
+    updateText();
+    conversion();
+    println(this.decimalString, this.hexString);
+    color textCol=color(50, 50, 50);
+    fill(textCol);
+    text("Denary: " + decimalString + " | Hex: " + hexString, bits.get(0).getX()+135,bits.get(0).getY()-80);
+  }
+
+  public void conversion() {
+    //Converts a binary string to a decimal number
+    int decimalNum = Integer.parseInt(this.text, 2);
+    //Converts decimal number into hexidecimal string 
+    String hexStr = Integer.toString(decimalNum, 16);
+    String decimalStr = "" + decimalNum;
+    this.decimalString = decimalStr;
+    this.hexString = hexStr;
   }
 
   void draw() {
@@ -39,8 +60,8 @@ class Binary extends DetectedObject {
     pushMatrix();
     translate(locX, locY);
     rect(0, 0, width, height, rad, rad, rad, rad);
+    //rect(0, 250, width, height, rad, rad, rad, rad);
     popMatrix();
-    updateText();
     fill(textCol);
     text(text, locX, locY);
   }
@@ -81,33 +102,19 @@ class Binary extends DetectedObject {
 
   private void updateText() {
     //will not need to run this until the binary number values(# bits) are full
-    StringBuilder updatedText = new StringBuilder("_ _ _ _");
-    int length = updatedText.length();
-    int index = length;
-    char bitChar = ' ';
+    println("UPDATETEXT START");
+    println(bits);
 
-    //replace _ with each element of bits
-    for (Bit bit : bits) {
-      if (bit.value == 0) {
-        bitChar = '0';
-      } else {
-        bitChar = '1';
-      }
-      //find the index of the next "_" char from the RHS
-      for (int i = length - 1; i > -1; i-=2) {
-        if (updatedText.charAt(i) == '_') {
-          index = i;
-          //to exit the loop
-          i = -1;
-        }
-      }
-      updatedText.setCharAt(index, bitChar);
+    String updatedText = "";
+
+    for (Bit bit : this.bits) {
+      updatedText+= bit.value;
+      println("bit value: " + bit.value);
     }
-    //fills the binary values in correct order swapping values is fine aswell
-    //but starts filling from the most signifcant bit 
-    //updatedText = updatedText.reverse();
-    text = updatedText.toString();
+    this.text = updatedText;
+    println("Updatedtext: " + updatedText);
   }
+
 
   int size() {
     return bits.size();
@@ -116,12 +123,12 @@ class Binary extends DetectedObject {
   boolean contains(Bit bit) {
     return bits.contains(bit);
   }
-  
+
   public void sort(Comparator<Bit> comp) {
     Collections.sort(this.bits, comp);
     //updateText3();
   }
-  
+
   String toString() {
     return "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
       + " Bit type: Binary";
