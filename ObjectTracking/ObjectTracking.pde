@@ -63,7 +63,7 @@ void drawRectOne() {
   int binOneLast = bitList.get(3).getX();
   int binOneYFirst = binaryOneClone.get(0).getY();
   int binOneYLast = binaryOneClone.get(3).getY();
-  if (binOneLast - binOneFirst < 400) {
+  if (binOneLast - binOneFirst < 350  && binOneYLast - binOneYFirst < 75) {
     rectMode(CENTER);
     pushMatrix();
     rectMode(CORNER);
@@ -84,7 +84,7 @@ void drawRectTwo() {
   int binTwoLast = bitList.get(7).getX();
   int binTwoYFirst = binaryTwoClone.get(0).getY();
   int binTwoYLast = binaryTwoClone.get(3).getY();
-  if (binTwoLast - binTwoFirst < 400) {
+  if (binTwoLast - binTwoFirst < 350 && binTwoYLast - binTwoYFirst < 75) {
     rectMode(CENTER);
     pushMatrix();
     rectMode(CORNER);
