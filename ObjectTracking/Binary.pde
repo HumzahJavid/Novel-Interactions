@@ -24,16 +24,22 @@ class Binary extends DetectedObject {
     locY = y;
   }
 
-  public Binary(ArrayList<Bit> bits) {
+  public Binary(ArrayList<Bit> bits1) {
+    
+    println("created binay obj " + bits1);
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    bits.addAll(bits);
+    this.bits.addAll(bits1);
     locX = width / 2;
     locY = height / 2;
+    
+    updateText();
+    conversion();
+    println(this.decimalString, this.hexString);
   }
 
-  public void Conversion() {
+  public void conversion() {
     //Converts a binary string to a decimal number
     int decimalNum = Integer.parseInt(this.text, 2);
     //Converts decimal number into hexidecimal string 
@@ -51,9 +57,8 @@ class Binary extends DetectedObject {
     pushMatrix();
     translate(locX, locY);
     rect(0, 0, width, height, rad, rad, rad, rad);
-    rect(0, 250, width, height, rad, rad, rad, rad);
+    //rect(0, 250, width, height, rad, rad, rad, rad);
     popMatrix();
-    updateText();
     fill(textCol);
     text(text, locX, locY);
   }
@@ -94,45 +99,19 @@ class Binary extends DetectedObject {
 
   private void updateText() {
     //will not need to run this until the binary number values(# bits) are full
-    StringBuilder updatedText = new StringBuilder("_ _ _ _");
-    int length = updatedText.length();
-    int index = length;
-    char bitChar = ' ';
-
-    //replace _ with each element of bits
-    for (Bit bit : bits) {
-      if (bit.value == 0) {
-        bitChar = '0';
-      } else {
-        bitChar = '1';
-      }
-      //find the index of the next "_" char from the RHS
-      for (int i = length - 1; i > -1; i-=2) {
-        if (updatedText.charAt(i) == '_') {
-          index = i;
-          //to exit the loop
-          i = -1;
-        }
-      }
-      updatedText.setCharAt(index, bitChar);
+    println("UPDATETEXT START");
+    println(bits);
+    
+    String updatedText = "";
+    
+    for (Bit bit : this.bits) {
+      updatedText+= bit.value;
+      println("bit value: " + bit.value);
     }
-    //fills the binary values in correct order swapping values is fine aswell
-    //but starts filling from the most signifcant bit 
-    //updatedText = updatedText.reverse();
-    text = updatedText.toString();
-
-
-    //Show bits/binary number
-    System.out.println(text);
-    int empty = 0;
-    for (int i = length - 1; i > -1; i-=2) {
-      if (text.charAt(i) == '1' || text.charAt(i) == '0') {
-        System.out.println("hi" + Integer.parseInt(text, 2));
-        //to exit the loop
-        i = -1;
-      }
-    }
+    this.text = updatedText;
+    println("Updatedtext: " + updatedText);
   }
+      
 
   int size() {
     return bits.size();
