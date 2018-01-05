@@ -4,6 +4,8 @@ class Binary extends DetectedObject {
   int locX = width / 2;
   int locY = height / 2;
   String text = "";
+  String decimalString;
+  String hexString;
 
   private final int MAXIMUM_LENGTH;
   ArrayList<Bit> bits = new ArrayList<Bit>();
@@ -29,6 +31,16 @@ class Binary extends DetectedObject {
     bits.addAll(bits);
     locX = width / 2;
     locY = height / 2;
+  }
+
+  public void Conversion() {
+    //Converts a binary string to a decimal number
+    int decimalNum = Integer.parseInt(this.text, 2);
+    //Converts decimal number into hexidecimal string 
+    String hexStr = Integer.toString(decimalNum, 16);
+    String decimalStr = "" + decimalNum;
+    this.decimalString = decimalStr;
+    this.hexString = hexStr;
   }
 
   void draw() {
@@ -108,19 +120,18 @@ class Binary extends DetectedObject {
     //but starts filling from the most signifcant bit 
     //updatedText = updatedText.reverse();
     text = updatedText.toString();
-    
-    
+
+
     //Show bits/binary number
     System.out.println(text);
     int empty = 0;
     for (int i = length - 1; i > -1; i-=2) {
-        if (text.charAt(i) == '1' || text.charAt(i) == '0') {
-          System.out.println("hi" + Integer.parseInt(text,2));
-          //to exit the loop
-          i = -1;
-        }
+      if (text.charAt(i) == '1' || text.charAt(i) == '0') {
+        System.out.println("hi" + Integer.parseInt(text, 2));
+        //to exit the loop
+        i = -1;
       }
-    
+    }
   }
 
   int size() {
@@ -130,12 +141,12 @@ class Binary extends DetectedObject {
   boolean contains(Bit bit) {
     return bits.contains(bit);
   }
-  
+
   public void sort(Comparator<Bit> comp) {
     Collections.sort(this.bits, comp);
     //updateText3();
   }
-  
+
   String toString() {
     return "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
       + " Bit type: Binary";
