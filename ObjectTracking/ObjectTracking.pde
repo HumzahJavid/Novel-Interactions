@@ -84,11 +84,11 @@ void drawRectOne() {
     rectMode(CENTER);
     pushMatrix();
     rectMode(CORNER);
+    stroke(color(255, 50, 50));
     noFill();
     rect(binOneFirst - 50, binOneYLast + 50, binOneLast - binOneFirst + 100, binOneYFirst - binOneYLast - 100, 10);
     popMatrix();
     rectMode(CENTER);
-    test = new Binary(binaryOne);
   }
 }
 
