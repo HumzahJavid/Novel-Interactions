@@ -38,7 +38,7 @@ class Binary extends DetectedObject {
     conversion();
     println(this.decimalString, this.hexString);
     color textCol=color(50, 50, 50);
-    fill(textCol);
+    
     
     int R = 0;
     int G = 0;
@@ -74,10 +74,13 @@ class Binary extends DetectedObject {
       }
     }
     pushMatrix();
+    rectMode(CORNER);
     noStroke();
     fill(R, G, B);
-    rect(500, 200, 50, 50);
+    rect(bits.get(0).getX() - 50, bits.get(0).getY() + 70, bits.get(3).getX() - 50, 100, 10);
     popMatrix();
+    rectMode(CENTER);
+    fill(textCol);
     text("Denary: " + decimalString + " | Hex: " + hexString, bits.get(0).getX()+135,bits.get(0).getY()-80);
   }
 
