@@ -4,8 +4,8 @@ class Binary extends DetectedObject {
   int locX = width / 2;
   int locY = height / 2;
   String text = "";
-  String decimalString;
-  String hexString;
+  String decimalString = "";
+  String hexString = "";
 
   private final int MAXIMUM_LENGTH;
   ArrayList<Bit> bits = new ArrayList<Bit>();
@@ -25,87 +25,85 @@ class Binary extends DetectedObject {
   }
 
   public Binary(ArrayList<Bit> bits1) {
-
-    println("created binay obj " + bits1);
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    this.bits.addAll(bits1);
+    this.bits = bits1;
     locX = width / 2;
     locY = height / 2;
-
-    updateText();
-    conversion();
-    println(this.decimalString, this.hexString);
-    color textCol=color(50, 50, 50);
-    
-    
-    int R = 0;
-    int G = 0;
-    int B = 0;
-    
-    if(this.bits.get(0).getValue() == 1){
-      R = 255;
-    } else {
-      R = 0;
-    }
-    
-    if(this.bits.get(1).getValue() == 1){
-      G = 255;
-    } else {
-      G = 0;
-    }
-    
-    if(this.bits.get(2).getValue() == 1){
-      B = 255;
-    } else {
-      B = 0;
-    }
-    
-    if(this.bits.get(3).getValue() == 1){
-      if(R == 255){
-        R = 130;
-      }
-      if(G == 255){
-        G = 130;
-      }
-      if(B == 255){
-        B = 130;
-      }
-    }
-    pushMatrix();
-    rectMode(CORNER);
-    noStroke();
-    fill(R, G, B);
-    rect(bits.get(0).getX() - 50, bits.get(0).getY() + 70, bits.get(3).getX() - 50, 100, 10);
-    popMatrix();
-    rectMode(CENTER);
-    fill(textCol);
-    text("Denary: " + decimalString + " | Hex: " + hexString, bits.get(0).getX()+135,bits.get(0).getY()-80);
   }
-
-  public void conversion() {
-    //Converts a binary string to a decimal number
-    int decimalNum = Integer.parseInt(this.text, 2);
-    //Converts decimal number into hexidecimal string 
-    String hexStr = Integer.toString(decimalNum, 16);
-    String decimalStr = "" + decimalNum;
-    this.decimalString = decimalStr;
-    this.hexString = hexStr;
+  
+  public void applyColour(){
+    if (this.text == "") {
+      println("number conversion NOT running");
+      } else {
+      color textCol=color(50, 50, 50);
+      fill(textCol);
+      
+      int R = 0;
+      int G = 0;
+      int B = 0;
+      
+      if(this.bits.get(0).getValue() == 1){
+        R = 255;
+      } else {
+        R = 0;
+      }
+      
+      if(this.bits.get(1).getValue() == 1){
+        G = 255;
+      } else {
+        G = 0;
+      }
+      
+      if(this.bits.get(2).getValue() == 1){
+        B = 255;
+      } else {
+        B = 0;
+      }
+      
+      if(this.bits.get(3).getValue() == 1){
+        if(R == 255){
+          R = 130;
+        }
+        if(G == 255){
+          G = 130;
+        }
+        if(B == 255){
+          B = 130;
+        }
+      }
+      pushMatrix();
+      rectMode(CORNER);
+      noStroke();
+      fill(R, G, B);
+      rect(bits.get(0).getX() - 50, bits.get(0).getY() + 70, bits.get(3).getX() - 50, 100, 10);
+      popMatrix();
+    }
+  }
+  public void numberConversion() {
+    if (this.text == "") {
+      println("number conversion NOT running");
+    } else {
+      //Converts a binary string to a decimal number
+      int decimalNum = Integer.parseInt(this.text, 2);
+      //Converts decimal number into hexidecimal string 
+      String hexStr = Integer.toString(decimalNum, 16);
+      String decimalStr = "" + decimalNum;
+      this.decimalString = decimalStr;
+      this.hexString = hexStr;
+      //Displays number conversions for a given binary number
+      text("Denary: " + decimalString + " | Hex: " + hexString.toUpperCase(), bits.get(0).getX()+135, bits.get(0).getY()-80);
+    }
   }
 
   void draw() {
     textAlign(CENTER, CENTER);
     noFill();
-    stroke(rectCol);
-
-    pushMatrix();
-    translate(locX, locY);
-    rect(0, 0, width, height, rad, rad, rad, rad);
-    //rect(0, 250, width, height, rad, rad, rad, rad);
-    popMatrix();
+    binaryText();
+    numberConversion();
     fill(textCol);
-    text(text, locX, locY);
+    applyColour();
   }
 
   void setPos(int x, int y) {
@@ -142,21 +140,13 @@ class Binary extends DetectedObject {
     }
   }
 
-  private void updateText() {
-    //will not need to run this until the binary number values(# bits) are full
-    println("UPDATETEXT START");
-    println(bits);
-
-    String updatedText = "";
-
+  private void binaryText() {
+    String binaryText = "";
     for (Bit bit : this.bits) {
-      updatedText+= bit.value;
-      println("bit value: " + bit.value);
+      binaryText+= bit.value;
     }
-    this.text = updatedText;
-    println("Updatedtext: " + updatedText);
+    this.text = binaryText;
   }
-
 
   int size() {
     return bits.size();
@@ -168,7 +158,6 @@ class Binary extends DetectedObject {
 
   public void sort(Comparator<Bit> comp) {
     Collections.sort(this.bits, comp);
-    //updateText3();
   }
 
   String toString() {
