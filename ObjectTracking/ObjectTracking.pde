@@ -45,11 +45,7 @@ void addBinary() {
     for (int i = 0; i < 4; i++) {
       binaryOneTemp.add(bitList.get(i));
     }
-
-    System.out.println("Binary One is " + binaryOne);
     drawRectOne();
-    test = new Binary(binaryOne);
-    
   }
   if (bitList.size() > 7){
     binaryTwoTemp.clear();
@@ -80,6 +76,7 @@ void drawRectOne() {
     rect(binOneFirst - 50, binOneYLast + 50, binOneLast - binOneFirst + 100, binOneYFirst - binOneYLast - 100, 10);
     popMatrix();
     rectMode(CENTER);
+    test = new Binary(binaryOne);
   }
 }
 

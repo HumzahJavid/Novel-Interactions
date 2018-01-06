@@ -39,6 +39,45 @@ class Binary extends DetectedObject {
     println(this.decimalString, this.hexString);
     color textCol=color(50, 50, 50);
     fill(textCol);
+    
+    int R = 0;
+    int G = 0;
+    int B = 0;
+    
+    if(this.bits.get(0).getValue() == 1){
+      R = 255;
+    } else {
+      R = 0;
+    }
+    
+    if(this.bits.get(1).getValue() == 1){
+      G = 255;
+    } else {
+      G = 0;
+    }
+    
+    if(this.bits.get(2).getValue() == 1){
+      B = 255;
+    } else {
+      B = 0;
+    }
+    
+    if(this.bits.get(3).getValue() == 1){
+      if(R == 255){
+        R = 130;
+      }
+      if(G == 255){
+        G = 130;
+      }
+      if(B == 255){
+        B = 130;
+      }
+    }
+    pushMatrix();
+    noStroke();
+    fill(R, G, B);
+    rect(500, 200, 50, 50);
+    popMatrix();
     text("Denary: " + decimalString + " | Hex: " + hexString, bits.get(0).getX()+135,bits.get(0).getY()-80);
   }
 
