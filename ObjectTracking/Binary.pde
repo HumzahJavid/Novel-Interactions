@@ -25,8 +25,6 @@ class Binary extends DetectedObject {
   }
 
   public Binary(ArrayList<Bit> bits1) {
-
-    println("created binay obj " + bits1);
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
@@ -34,15 +32,13 @@ class Binary extends DetectedObject {
     locX = width / 2;
     locY = height / 2;
 
-    updateText();
-    conversion();
-    println(this.decimalString, this.hexString);
-    color textCol=color(50, 50, 50);
-    fill(textCol);
-    text("Denary: " + decimalString + " | Hex: " + hexString, bits.get(0).getX()+135,bits.get(0).getY()-80);
+    binaryText();
+    numberConversion();
+    //Displays number conversions for a given binary number
+    text("Denary: " + decimalString + " | Hex: " + hexString.toUpperCase(), bits.get(0).getX()+135, bits.get(0).getY()-80);
   }
 
-  public void conversion() {
+  public void numberConversion() {
     //Converts a binary string to a decimal number
     int decimalNum = Integer.parseInt(this.text, 2);
     //Converts decimal number into hexidecimal string 
@@ -53,6 +49,7 @@ class Binary extends DetectedObject {
   }
 
   void draw() {
+    println("drawin");
     textAlign(CENTER, CENTER);
     noFill();
     stroke(rectCol);
@@ -60,7 +57,6 @@ class Binary extends DetectedObject {
     pushMatrix();
     translate(locX, locY);
     rect(0, 0, width, height, rad, rad, rad, rad);
-    //rect(0, 250, width, height, rad, rad, rad, rad);
     popMatrix();
     fill(textCol);
     text(text, locX, locY);
@@ -100,21 +96,14 @@ class Binary extends DetectedObject {
     }
   }
 
-  private void updateText() {
-    //will not need to run this until the binary number values(# bits) are full
-    println("UPDATETEXT START");
-    println(bits);
-
-    String updatedText = "";
+  private void binaryText() {
+    String binaryText = "";
 
     for (Bit bit : this.bits) {
-      updatedText+= bit.value;
-      println("bit value: " + bit.value);
+      binaryText+= bit.value;
     }
-    this.text = updatedText;
-    println("Updatedtext: " + updatedText);
+    this.text = binaryText;
   }
-
 
   int size() {
     return bits.size();

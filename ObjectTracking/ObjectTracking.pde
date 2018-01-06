@@ -13,6 +13,7 @@ ArrayList<Bit> bitList = new ArrayList<Bit>();
 ArrayList<Bit> binaryOne = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
 Binary test;
+Binary test2;
 
 Map <Integer, DetectedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
@@ -53,7 +54,9 @@ void addBinary() {
     for (int i = 0, j = 4; i < 4; i++, j++) {
       binaryTwo.add(bitList.get(j));
     }
+    System.out.println("Binary Two is " + binaryTwo);
     drawRectTwo();
+    test2 = new Binary(binaryTwo);
   }
 }
 
