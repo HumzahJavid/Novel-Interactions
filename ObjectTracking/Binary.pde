@@ -32,7 +32,55 @@ class Binary extends DetectedObject {
     locX = width / 2;
     locY = height / 2;
   }
-
+  
+  public void applyColour(){
+    if (this.text == "") {
+      println("number conversion NOT running");
+      } else {
+      color textCol=color(50, 50, 50);
+      fill(textCol);
+      
+      int R = 0;
+      int G = 0;
+      int B = 0;
+      
+      if(this.bits.get(0).getValue() == 1){
+        R = 255;
+      } else {
+        R = 0;
+      }
+      
+      if(this.bits.get(1).getValue() == 1){
+        G = 255;
+      } else {
+        G = 0;
+      }
+      
+      if(this.bits.get(2).getValue() == 1){
+        B = 255;
+      } else {
+        B = 0;
+      }
+      
+      if(this.bits.get(3).getValue() == 1){
+        if(R == 255){
+          R = 130;
+        }
+        if(G == 255){
+          G = 130;
+        }
+        if(B == 255){
+          B = 130;
+        }
+      }
+      pushMatrix();
+      rectMode(CORNER);
+      noStroke();
+      fill(R, G, B);
+      rect(bits.get(0).getX() - 50, bits.get(0).getY() + 70, bits.get(3).getX() - 50, 100, 10);
+      popMatrix();
+    }
+  }
   public void numberConversion() {
     if (this.text == "") {
       println("number conversion NOT running");
@@ -55,7 +103,7 @@ class Binary extends DetectedObject {
     binaryText();
     numberConversion();
     fill(textCol);
-    text(text, locX, locY);
+    applyColour();
   }
 
   void setPos(int x, int y) {
