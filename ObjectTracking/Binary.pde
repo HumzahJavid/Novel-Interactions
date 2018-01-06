@@ -6,6 +6,32 @@ class Binary extends DetectedObject {
   String text = "";
   String decimalString = "";
   String hexString = "";
+  //whether to draw the binary
+  boolean alive = false;
+
+  Comparator<Bit> compX = new Comparator<Bit>() {
+    public int compare(Bit o1, Bit o2) {
+      if (o1.getX()<o2.getX()) { 
+        return -1;
+      } else if (o1.getX()>o2.getX()) { 
+        return 1;
+      } else { 
+        return 0;
+      }
+    }
+  };
+
+  Comparator<Bit> compY = new Comparator<Bit>() {
+    public int compare(Bit o1, Bit o2) {
+      if (o1.getY()<o2.getY()) { 
+        return -1;
+      } else if (o1.getY()>o2.getY()) { 
+        return 1;
+      } else { 
+        return 0;
+      }
+    }
+  };
 
   private final int MAXIMUM_LENGTH;
   ArrayList<Bit> bits = new ArrayList<Bit>();
@@ -32,55 +58,59 @@ class Binary extends DetectedObject {
     locX = width / 2;
     locY = height / 2;
   }
-  
-  public void applyColour(){
+
+  public void applyColour() {
     if (this.text == "") {
       println("number conversion NOT running");
-      } else {
+    } else {
       color textCol=color(50, 50, 50);
       fill(textCol);
-      
+
       int R = 0;
       int G = 0;
       int B = 0;
-      
-      if(this.bits.get(0).getValue() == 1){
+
+      if (this.bits.get(0).getValue() == 1) {
         R = 255;
       } else {
         R = 0;
       }
-      
-      if(this.bits.get(1).getValue() == 1){
+
+      if (this.bits.get(1).getValue() == 1) {
         G = 255;
       } else {
         G = 0;
       }
-      
-      if(this.bits.get(2).getValue() == 1){
+
+      if (this.bits.get(2).getValue() == 1) {
         B = 255;
       } else {
         B = 0;
       }
-      
-      if(this.bits.get(3).getValue() == 1){
-        if(R == 255){
+
+      if (this.bits.get(3).getValue() == 1) {
+        if (R == 255) {
           R = 130;
         }
-        if(G == 255){
+        if (G == 255) {
           G = 130;
         }
-        if(B == 255){
+        if (B == 255) {
           B = 130;
         }
       }
+
+      rectMode(CENTER);
       pushMatrix();
       rectMode(CORNER);
       noStroke();
       fill(R, G, B);
       rect(bits.get(0).getX() - 50, bits.get(0).getY() + 70, bits.get(3).getX() - 50, 100, 10);
       popMatrix();
+      rectMode(CENTER);
     }
   }
+
   public void numberConversion() {
     if (this.text == "") {
       println("number conversion NOT running");
@@ -98,12 +128,44 @@ class Binary extends DetectedObject {
   }
 
   void draw() {
-    textAlign(CENTER, CENTER);
-    noFill();
-    binaryText();
-    numberConversion();
-    fill(textCol);
-    applyColour();
+    if (this.alive) {
+      textAlign(CENTER, CENTER);
+      noFill();
+      drawBoundary();
+      binaryText();
+      numberConversion();
+      fill(textCol);
+      applyColour();
+    } else {
+      //need to check whether the boundary should be drawn in the next frame(check if alive)
+      drawBoundary();
+    }
+  }
+
+  void drawBoundary() {
+    ;
+    ArrayList<Bit> bitsClone = new ArrayList<Bit>();
+    bitsClone.addAll(this.bits);
+    Collections.sort(bitsClone, compY);
+
+    int binTwoFirst = this.bits.get(0).getX();
+    int binTwoLast = this.bits.get(3).getX();
+    int binTwoYFirst = this.bits.get(0).getY();
+    int binTwoYLast = this.bits.get(3).getY();
+    if (binTwoLast - binTwoFirst < 350 && binTwoYLast - binTwoYFirst < 75) {
+      println("ITs alive");
+      this.alive = true;
+      rectMode(CENTER);
+      pushMatrix();
+      rectMode(CORNER);
+      noFill();
+      rect(binTwoFirst - 50, binTwoYLast + 50, binTwoLast - binTwoFirst + 100, binTwoYFirst - binTwoYLast - 100, 10);
+      popMatrix();
+      rectMode(CENTER);
+    } else {
+      this.alive = false;
+      println("ITs dead");
+    }
   }
 
   void setPos(int x, int y) {

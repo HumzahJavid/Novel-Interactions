@@ -12,11 +12,12 @@ ArrayList<Bit> bitList = new ArrayList<Bit>();
 
 ArrayList<Bit> binaryOne = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
-Binary test = new Binary(binaryOne);
-Binary test2 = new Binary(binaryTwo);
 
 ArrayList<Bit> binaryOneTemp = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwoTemp = new ArrayList<Bit>();
+
+Binary test = new Binary(binaryOneTemp);
+Binary test2 = new Binary(binaryTwoTemp);
 
 Map <Integer, DetectedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
@@ -47,9 +48,7 @@ void addBinary() {
     for (int i = 0; i < 4; i++) {
       binaryOneTemp.add(bitList.get(i));
     }
-    
-    //System.out.println("Binary One is " + binaryOne);
-    drawRectOne();
+    //drawRectOne();
     if (!binaryList.contains(test)) {
       binaryList.add(test);
     }
@@ -61,7 +60,7 @@ void addBinary() {
       binaryTwoTemp.add(bitList.get(j));
     }
     //System.out.println("Binary Two is " + binaryTwo);
-    drawRectTwo();
+    //drawRectTwo();
     if (!binaryList.contains(test2)) {
       binaryList.add(test2);
     }
@@ -117,6 +116,7 @@ void drawRectTwo() {
 
 void draw() {
   background(255);
+  println(objects.size());
   synchronized(objects) {
     //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
     for (DetectedObject to : objects.values()) {
