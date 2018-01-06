@@ -12,8 +12,8 @@ ArrayList<Bit> bitList = new ArrayList<Bit>();
 
 ArrayList<Bit> binaryOne = new ArrayList<Bit>();
 ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
-Binary test;
-Binary test2;
+Binary test = new Binary(binaryOne);
+Binary test2 = new Binary(binaryTwo);
 
 Map <Integer, DetectedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
@@ -21,6 +21,7 @@ LogicGate and1;
 LogicGate or1;
 LogicGate not1;
 ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
+ArrayList<Binary> binaryList = new ArrayList<Binary>();
 
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 //and, or, not, .... xor nand nor nxor 
@@ -44,19 +45,22 @@ void addBinary() {
       binaryOne.add(bitList.get(i));
     }
 
-    System.out.println("Binary One is " + binaryOne);
+    //System.out.println("Binary One is " + binaryOne);
     drawRectOne();
-    test = new Binary(binaryOne);
-    
+    if (!binaryList.contains(test)) {
+      binaryList.add(test);
+    }
   }
-  if (bitList.size() > 7){
+  if (bitList.size() > 7) {
     binaryTwo.clear();
     for (int i = 0, j = 4; i < 4; i++, j++) {
       binaryTwo.add(bitList.get(j));
     }
-    System.out.println("Binary Two is " + binaryTwo);
+    //System.out.println("Binary Two is " + binaryTwo);
     drawRectTwo();
-    test2 = new Binary(binaryTwo);
+    if (!binaryList.contains(test2)) {
+      binaryList.add(test2);
+    }
   }
 }
 
@@ -65,7 +69,7 @@ void drawRectOne() {
   binaryOneClone.clear();
   binaryOneClone.addAll(binaryOne);
   Collections.sort(binaryOneClone, compY);
-  
+
   int binOneFirst = bitList.get(0).getX();
   int binOneLast = bitList.get(3).getX();
   int binOneYFirst = binaryOneClone.get(0).getY();
@@ -86,7 +90,7 @@ void drawRectTwo() {
   binaryTwoClone.clear();
   binaryTwoClone.addAll(binaryTwo);
   Collections.sort(binaryTwoClone, compY);
-  
+
   int binTwoFirst = bitList.get(4).getX();
   int binTwoLast = bitList.get(7).getX();
   int binTwoYFirst = binaryTwoClone.get(0).getY();
@@ -108,6 +112,9 @@ void draw() {
     //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
     for (DetectedObject to : objects.values()) {
       to.draw();
+    }
+    for (Binary binary : binaryList) {
+      binary.draw();
     }
   }
   addBinary();

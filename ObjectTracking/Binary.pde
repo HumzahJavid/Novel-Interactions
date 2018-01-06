@@ -4,8 +4,8 @@ class Binary extends DetectedObject {
   int locX = width / 2;
   int locY = height / 2;
   String text = "";
-  String decimalString;
-  String hexString;
+  String decimalString = "";
+  String hexString = "";
 
   private final int MAXIMUM_LENGTH;
   ArrayList<Bit> bits = new ArrayList<Bit>();
@@ -28,36 +28,32 @@ class Binary extends DetectedObject {
     MAXIMUM_LENGTH = bits.size();
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
-    this.bits.addAll(bits1);
+    this.bits = bits1;
     locX = width / 2;
     locY = height / 2;
-
-    binaryText();
-    numberConversion();
-    //Displays number conversions for a given binary number
-    text("Denary: " + decimalString + " | Hex: " + hexString.toUpperCase(), bits.get(0).getX()+135, bits.get(0).getY()-80);
   }
 
   public void numberConversion() {
-    //Converts a binary string to a decimal number
-    int decimalNum = Integer.parseInt(this.text, 2);
-    //Converts decimal number into hexidecimal string 
-    String hexStr = Integer.toString(decimalNum, 16);
-    String decimalStr = "" + decimalNum;
-    this.decimalString = decimalStr;
-    this.hexString = hexStr;
+    if (this.text == "") {
+      println("number conversion NOT running");
+    } else {
+      //Converts a binary string to a decimal number
+      int decimalNum = Integer.parseInt(this.text, 2);
+      //Converts decimal number into hexidecimal string 
+      String hexStr = Integer.toString(decimalNum, 16);
+      String decimalStr = "" + decimalNum;
+      this.decimalString = decimalStr;
+      this.hexString = hexStr;
+      //Displays number conversions for a given binary number
+      text("Denary: " + decimalString + " | Hex: " + hexString.toUpperCase(), bits.get(0).getX()+135, bits.get(0).getY()-80);
+    }
   }
 
   void draw() {
-    println("drawin");
     textAlign(CENTER, CENTER);
     noFill();
-    stroke(rectCol);
-
-    pushMatrix();
-    translate(locX, locY);
-    rect(0, 0, width, height, rad, rad, rad, rad);
-    popMatrix();
+    binaryText();
+    numberConversion();
     fill(textCol);
     text(text, locX, locY);
   }
@@ -98,7 +94,6 @@ class Binary extends DetectedObject {
 
   private void binaryText() {
     String binaryText = "";
-
     for (Bit bit : this.bits) {
       binaryText+= bit.value;
     }
@@ -115,7 +110,6 @@ class Binary extends DetectedObject {
 
   public void sort(Comparator<Bit> comp) {
     Collections.sort(this.bits, comp);
-    //updateText3();
   }
 
   String toString() {
