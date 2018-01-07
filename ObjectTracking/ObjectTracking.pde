@@ -116,7 +116,6 @@ void drawRectTwo() {
 
 void draw() {
   background(255);
-  println(objects.size());
   synchronized(objects) {
     //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
     for (DetectedObject to : objects.values()) {
