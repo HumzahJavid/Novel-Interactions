@@ -150,8 +150,8 @@ class Binary extends DetectedObject {
 
     int binTwoFirst = this.bits.get(0).getX();
     int binTwoLast = this.bits.get(3).getX();
-    int binTwoYFirst = this.bits.get(0).getY();
-    int binTwoYLast = this.bits.get(3).getY();
+    int binTwoYFirst = bitsClone.get(0).getY();
+    int binTwoYLast = bitsClone.get(3).getY();
     if (binTwoLast - binTwoFirst < 350 && binTwoYLast - binTwoYFirst < 75) {
       println("ITs alive");
       this.alive = true;
