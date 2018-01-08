@@ -1,5 +1,4 @@
 class MathOperator extends DetectedObject {
-  int locX, locY;
   int rad=10;
   int size = 50;
   int id;
@@ -15,11 +14,7 @@ class MathOperator extends DetectedObject {
     noFill();
     stroke(rectCol);
 
-    pushMatrix();
-    translate(locX, locY);
-    rect(0, 0, size, size, rad, rad, rad, rad);
-    popMatrix();
-
+    rect(locX, locY, size, size, rad, rad, rad, rad);
     fill(textCol);
     text(text, locX, locY);
   }

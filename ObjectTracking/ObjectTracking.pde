@@ -343,6 +343,7 @@ void updateTuioObject (TuioObject tobj) {
 
   synchronized(objects) {
     if (objects.containsKey(id)) {
+      println("id is20?" + id);
       DetectedObject o = objects.get(id);
       o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
       o.setAngle(tobj.getAngle());
