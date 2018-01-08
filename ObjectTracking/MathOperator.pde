@@ -35,6 +35,7 @@ class MathOperator extends DetectedObject {
   }
 
   public Binary addition(Binary a, Binary b) {
+    println("running addition function with " + a + " " + b);
     int c[] = new int[a.size() + 1];
     int carry = 0;
     for (int i = a.size() - 1; i > -1; i--) { // i 1
@@ -47,6 +48,8 @@ class MathOperator extends DetectedObject {
     for (int number : c) {
       resultBits.add(new Bit(""+number));
     }
+    
+    System.out.println(" result is  = " + resultBits);
     Binary result = new Binary(resultBits);
     return result;
   }
