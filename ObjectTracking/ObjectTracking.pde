@@ -28,6 +28,7 @@ ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
 ArrayList<Binary> binaryList = new ArrayList<Binary>();
 
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+int operatorIds[] = {20, 21, 22, 23};
 //and, or, not, .... xor nand nor nxor 
 int gateIds[] = {30, 31, 32, 33};
 
@@ -55,7 +56,7 @@ void addBinary() {
   }
   if (bitList.size() > 7) {
     binaryTwoTemp.clear();
-    
+
     for (int i = 0, j = 4; i < 4; i++, j++) {
       binaryTwoTemp.add(bitList.get(j));
     }
@@ -283,6 +284,26 @@ void addTuioObject(TuioObject tobj) {
     if (o instanceof Bit) {
       bitList.add(o);
     }
+  } else if (contains(id, operatorIds)) {
+    MathOperator o;
+    switch(id) {
+    case 20:
+      o = new MathOperator("+");
+      break;
+    case 21: 
+      o = new MathOperator("-");
+      break;
+    case 22:
+      o = new MathOperator("*");
+      break;
+    default:
+      o = new MathOperator("+");
+      break;
+    }
+    o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
+    o.setId(id);
+    println("added object with math id " + id);
+    objects.put(id, o);
   } else if (contains(id, gateIds)) {
     //if the id is that of a logicGate, create the corresponding logic gate (o) 
     //add o to the object hashmap and the gateList arraylist 

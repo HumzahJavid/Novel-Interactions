@@ -1,15 +1,27 @@
 class MathOperator extends DetectedObject {
-  float angle=0;
-  color rectCol;
-  color textCol;
-  String text = " ";
   int locX, locY;
   int rad=10;
+  int size = 50;
+  int id;
 
   MathOperator(String operator) {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
     this.text = operator;
+  }
+
+
+  void draw() {
+    noFill();
+    stroke(rectCol);
+
+    pushMatrix();
+    translate(locX, locY);
+    rect(0, 0, size, size, rad, rad, rad, rad);
+    popMatrix();
+
+    fill(textCol);
+    text(text, locX, locY);
   }
 
   public int calculate(Binary b1, Binary b2) {
@@ -37,7 +49,7 @@ class MathOperator extends DetectedObject {
     c[0] = carry;
     System.out.println(" carry = " + carry);
     ArrayList<Bit> resultBits = new ArrayList<Bit>();
-    for(int number : c){
+    for (int number : c) {
       resultBits.add(new Bit(""+number));
     }
     Binary result = new Binary(resultBits);
@@ -54,5 +66,13 @@ class MathOperator extends DetectedObject {
 
   public Binary division(Binary a, Binary b) {
     return null;
+  }
+
+  public int getId() {
+    return this.id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 }
