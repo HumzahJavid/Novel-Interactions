@@ -1,5 +1,4 @@
 class MathOperator extends DetectedObject {
-  int locX, locY;
   int rad=10;
   int size = 50;
   int id;
@@ -12,6 +11,7 @@ class MathOperator extends DetectedObject {
 
 
   void draw() {
+  
     noFill();
     stroke(rectCol);
 
@@ -32,8 +32,6 @@ class MathOperator extends DetectedObject {
       subtraction(b1, b2);
     case "*": 
       mutiplication(b1, b2);
-    case "/":
-      division(b1, b2);
       break;
     }
     return 0;
@@ -54,7 +52,7 @@ class MathOperator extends DetectedObject {
     }
     Binary result = new Binary(resultBits);
     return result;
-  }
+  } 
 
   public Binary subtraction(Binary a, Binary b) {
     return null;
@@ -63,11 +61,7 @@ class MathOperator extends DetectedObject {
   public Binary mutiplication(Binary a, Binary b) {
     return null;
   }
-
-  public Binary division(Binary a, Binary b) {
-    return null;
-  }
-
+  
   public int getId() {
     return this.id;
   }
