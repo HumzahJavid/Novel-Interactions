@@ -160,7 +160,6 @@ class Binary extends DetectedObject {
       pushMatrix();
       rectMode(CORNER);
       //testing the color of the rectangle drawn
-      println("drawing rectangle with RGB = "+ red(rectCol) + " , " + green(rectCol) + " , " + blue(rectCol));
       preventBlankStroke();
       //draw rectangle boundary **
       rect(binTwoFirst - 50, binTwoYLast + 50, binTwoLast - binTwoFirst + 100, binTwoYFirst - binTwoYLast - 100, 10);
@@ -248,7 +247,10 @@ class Binary extends DetectedObject {
   }
 
   String toString() {
-    return "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
+    return ""+this.bits;
+    /*
+    "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
       + " Bit type: Binary";
+      */
   }
 }

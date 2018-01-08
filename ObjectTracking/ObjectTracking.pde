@@ -26,6 +26,7 @@ LogicGate or1;
 LogicGate not1;
 ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
 ArrayList<Binary> binaryList = new ArrayList<Binary>();
+ArrayList<MathOperator> operatorList = new ArrayList<MathOperator>();
 
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 int operatorIds[] = {20, 21, 22, 23};
@@ -124,6 +125,13 @@ void draw() {
     }
     for (Binary binary : binaryList) {
       binary.draw();
+    }
+
+    for (MathOperator math : operatorList) {
+      if ((test.alive) && (test2.alive)) {
+        //***
+        math.calculate(test, test2);
+      }
     }
   }
   addBinary();
@@ -302,8 +310,10 @@ void addTuioObject(TuioObject tobj) {
     }
     o.setPos(tobj.getScreenX(width), tobj.getScreenY(height));
     o.setId(id);
-    println("added object with math id " + id);
     objects.put(id, o);
+    if (o instanceof MathOperator) {
+      operatorList.add(o);
+    }
   } else if (contains(id, gateIds)) {
     //if the id is that of a logicGate, create the corresponding logic gate (o) 
     //add o to the object hashmap and the gateList arraylist 
