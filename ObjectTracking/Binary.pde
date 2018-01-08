@@ -238,6 +238,10 @@ class Binary extends DetectedObject {
   boolean contains(Bit bit) {
     return bits.contains(bit);
   }
+  
+  public int getValue(int i){
+    return this.bits.get(i).getValue();
+  }
 
   public void sort(Comparator<Bit> comp) {
     Collections.sort(this.bits, comp);

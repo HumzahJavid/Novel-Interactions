@@ -16,35 +16,32 @@ class MathOperator extends DetectedObject {
     switch(this.text) {
     case "+":
       addition(b1, b2);
-      
     case "-":
       subtraction(b1, b2);
-      
     case "*": 
       mutiplication(b1, b2);
-
     case "/":
       division(b1, b2);
-
       break;
     }
     return 0;
   }
 
-  //addition
-  public void addition(int[] a, int[] b) {
-
-    int c[] = new int[a.length + 1];
+  public Binary addition(Binary a, Binary b) {
+    int c[] = new int[a.size() + 1];
     int carry = 0;
-    for (int i = a.length - 1; i > -1; i--) { // i 1
-      c[i + 1] = (a[i] + b[i] + carry) % 2;// c[2]
-      carry = (a[i] + b[i]) / 2;
-      
+    for (int i = a.size() - 1; i > -1; i--) { // i 1
+      c[i + 1] = (a.getValue(i) + b.getValue(i) + carry) % 2;// c[2]
+      carry = (a.getValue(i) + b.getValue(i)) / 2;
     }
-    
     c[0] = carry;
     System.out.println(" carry = " + carry);
-    printArr(c);
+    ArrayList<Bit> resultBits = new ArrayList<Bit>();
+    for(int number : c){
+      resultBits.add(new Bit(""+number));
+    }
+    Binary result = new Binary(resultBits);
+    return result;
   }
 
   public Binary subtraction(Binary a, Binary b) {
