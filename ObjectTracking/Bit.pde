@@ -94,6 +94,6 @@ public class Bit extends DetectedObject {
   }
 
   public String toString() {
-    return super.toString()+ " value = " + this.value;
+    return ""+this.getValue();//super.toString()+ " value = " + this.value;
   }
 }

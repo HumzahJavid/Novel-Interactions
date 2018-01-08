@@ -9,19 +9,29 @@ TuioProcessing tuioClient;
 PFont font;
 //stores all the detected bits
 ArrayList<Bit> bitList = new ArrayList<Bit>();
+
+ArrayList<Bit> binaryOne = new ArrayList<Bit>();
+ArrayList<Bit> binaryTwo = new ArrayList<Bit>();
+
+ArrayList<Bit> binaryOneTemp = new ArrayList<Bit>();
+ArrayList<Bit> binaryTwoTemp = new ArrayList<Bit>();
+
+Binary test = new Binary(binaryOneTemp);
+Binary test2 = new Binary(binaryTwoTemp);
+
 Map <Integer, DetectedObject> objects = 
   Collections.synchronizedMap(new HashMap<Integer, DetectedObject>()); 
 LogicGate and1;
 LogicGate or1;
 LogicGate not1;
 ArrayList<LogicGate> gateList = new ArrayList<LogicGate>();
+ArrayList<Binary> binaryList = new ArrayList<Binary>();
 
 int bitIds[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 //and, or, not, .... xor nand nor nxor 
 int gateIds[] = {30, 31, 32, 33};
 
-void setup()
-{
+void setup() {
   size(1000, 650);
   textSize(30);
 
@@ -31,15 +41,91 @@ void setup()
   tuioClient  = new TuioProcessing(this);
 }
 
-void draw()
-{
+void addBinary() {
+  if (bitList.size() > 3) {
+    binaryOneTemp.clear();
+    Collections.sort(bitList, compX);
+    for (int i = 0; i < 4; i++) {
+      binaryOneTemp.add(bitList.get(i));
+    }
+    //drawRectOne();
+    if (!binaryList.contains(test)) {
+      binaryList.add(test);
+    }
+  }
+  if (bitList.size() > 7) {
+    binaryTwoTemp.clear();
+    
+    for (int i = 0, j = 4; i < 4; i++, j++) {
+      binaryTwoTemp.add(bitList.get(j));
+    }
+    //System.out.println("Binary Two is " + binaryTwo);
+    //drawRectTwo();
+    if (!binaryList.contains(test2)) {
+      binaryList.add(test2);
+    }
+  }
+}
+
+void drawRectOne() {
+  ArrayList<Bit> binaryOneClone = new ArrayList<Bit>();
+  binaryOneClone.clear();
+  binaryOneClone.addAll(binaryOneTemp);
+  Collections.sort(binaryOneClone, compY);
+
+  int binOneFirst = bitList.get(0).getX();
+  int binOneLast = bitList.get(3).getX();
+  int binOneYFirst = binaryOneClone.get(0).getY();
+  int binOneYLast = binaryOneClone.get(3).getY();
+  if (binOneLast - binOneFirst < 350  && binOneYLast - binOneYFirst < 75) {
+    binaryOne.clear();
+    binaryOne.addAll(binaryOneTemp);
+    rectMode(CENTER);
+    pushMatrix();
+    rectMode(CORNER);
+    stroke(color(255, 50, 50));
+    noFill();
+    rect(binOneFirst - 50, binOneYLast + 50, binOneLast - binOneFirst + 100, binOneYFirst - binOneYLast - 100, 10);
+    popMatrix();
+    rectMode(CENTER);
+  }
+}
+
+void drawRectTwo() {
+  ArrayList<Bit> binaryTwoClone = new ArrayList<Bit>();
+  binaryTwoClone.clear();
+  binaryTwoClone.addAll(binaryTwoTemp);
+  Collections.sort(binaryTwoClone, compY);
+
+  int binTwoFirst = bitList.get(4).getX();
+  int binTwoLast = bitList.get(7).getX();
+  int binTwoYFirst = binaryTwoClone.get(0).getY();
+  int binTwoYLast = binaryTwoClone.get(3).getY();
+  if (binTwoLast - binTwoFirst < 350 && binTwoYLast - binTwoYFirst < 75) {
+    binaryTwo.clear();
+    binaryTwo.addAll(binaryTwoTemp);
+    rectMode(CENTER);
+    pushMatrix();
+    rectMode(CORNER);
+    noFill();
+    rect(binTwoFirst - 50, binTwoYLast + 50, binTwoLast - binTwoFirst + 100, binTwoYFirst - binTwoYLast - 100, 10);
+    popMatrix();
+    rectMode(CENTER);
+  }
+}
+
+void draw() {
   background(255);
   synchronized(objects) {
     //objects now contains DetectedObjects (Bit, Binary and LogicGate and potentially MathOperator Objects)
     for (DetectedObject to : objects.values()) {
       to.draw();
     }
+    for (Binary binary : binaryList) {
+      binary.draw();
+    }
   }
+  addBinary();
 }
 
 public static boolean contains(int element, int[] arr) {
@@ -63,7 +149,7 @@ public static boolean checkInputsWithinRange(LogicGate gate, ArrayList<Bit> bitL
   boolean gateInputsAssigned = gate.inUse();
   //if the bit is assigned to a gate
   boolean assignedToGate;
-  
+
   for (Bit bit : bitList) {
     float xBit = bit.getX();
     float yBit = bit.getY();
@@ -253,10 +339,10 @@ void updateTuioObject (TuioObject tobj) {
           outputBits.add(gate.output(inputBits.get(0), inputBits.get(1)));
         }
       } else if (gate.inUse() && bitList.contains(gate.input1)) {
-        if (gate.inputsStillInRange()){
+        if (gate.inputsStillInRange()) {
           outputBits.add(gate.output);
         } else {
-        //the inputs are not in range set output to blank
+          //the inputs are not in range set output to blank
           gate.blankOutput();
         }
       } else {
@@ -303,6 +389,30 @@ void removeTuioObject(TuioObject tobj) {
     gateToRemove = null;
   }
 }
+
+Comparator<Bit> compX = new Comparator<Bit>() {
+  public int compare(Bit o1, Bit o2) {
+    if (o1.getX()<o2.getX()) { 
+      return -1;
+    } else if (o1.getX()>o2.getX()) { 
+      return 1;
+    } else { 
+      return 0;
+    }
+  }
+};
+
+Comparator<Bit> compY = new Comparator<Bit>() {
+  public int compare(Bit o1, Bit o2) {
+    if (o1.getY()<o2.getY()) { 
+      return -1;
+    } else if (o1.getY()>o2.getY()) { 
+      return 1;
+    } else { 
+      return 0;
+    }
+  }
+};
 
 //for debug purposes
 public static void printArr(int[][] arr) {
