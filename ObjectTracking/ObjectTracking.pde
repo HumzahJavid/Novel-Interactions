@@ -304,6 +304,9 @@ void addTuioObject(TuioObject tobj) {
     case 22:
       o = new MathOperator("*");
       break;
+      case 23:
+      o = new MathOperator("/");
+      break;
     default:
       o = new MathOperator("+");
       break;
