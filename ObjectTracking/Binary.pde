@@ -61,6 +61,28 @@ class Binary extends DetectedObject {
     locY = height / 2;
   }
 
+  void draw() {
+    if (this.alive) {
+      textAlign(CENTER, CENTER);
+      noFill();
+      drawBoundary();
+      applyColour();
+      binaryText();
+      numberConversion();
+    } else {
+      //need to check whether the boundary should be drawn in the next frame(check if alive)
+      drawBoundary();
+    }
+  }
+
+  void add(Bit bit) {
+    if (this.bits.size() < MAXIMUM_LENGTH) {
+      this.bits.add(bit);
+    } else {
+      System.out.println("BINARY VALUE IS FULL");
+    }
+  }
+
   public void applyColour() {
     if (this.text == "") {
       println("number conversion NOT running");
@@ -105,7 +127,6 @@ class Binary extends DetectedObject {
       noStroke();
       rectCol = color(R, G, B);
       preventBlankStroke();
-      //fill(R, G, B);
       fill(rectCol);
       //draw rectangle color **
       rect(bits.get(0).getX() - 50, bits.get(0).getY() + 75, bits.get(3).getX() - bits.get(0).getX() + 100, 100, 10);
@@ -114,35 +135,16 @@ class Binary extends DetectedObject {
     }
   }
 
-  public void numberConversion() {
-    if (this.text == "") {
-      println("number conversion NOT running");
-    } else {
-      //Converts a binary string to a decimal number
-      int decimalNum = Integer.parseInt(this.text, 2);
-      //Converts decimal number into hexidecimal string 
-      String hexStr = Integer.toString(decimalNum, 16);
-      String decimalStr = "" + decimalNum;
-      this.decimalString = decimalStr;
-      this.hexString = hexStr;
-      fill(textCol);
-      //Displays number conversions for a given binary number
-      text("Denary: " + decimalString + " | Hex: " + hexString.toUpperCase(), bits.get(0).getX()+135, bits.get(0).getY()-80);
+  private void binaryText() {
+    String binaryText = "";
+    for (Bit bit : this.bits) {
+      binaryText+= bit.value;
     }
+    this.text = binaryText;
   }
 
-  void draw() {
-    if (this.alive) {
-      textAlign(CENTER, CENTER);
-      noFill();
-      drawBoundary();
-      applyColour();
-      binaryText();
-      numberConversion();
-    } else {
-      //need to check whether the boundary should be drawn in the next frame(check if alive)
-      drawBoundary();
-    }
+  boolean contains(Bit bit) {
+    return bits.contains(bit);
   }
 
   void drawBoundary() {
@@ -170,30 +172,29 @@ class Binary extends DetectedObject {
       println("ITs dead");
     }
   }
-
-  void setPos(int x, int y) {
-    locX=x; 
-    locY=y;
-  }
-
-  void shiftPos(int dx, int dy) {
-    locX+=dx; 
-    locY+=dy;
-  }
-
+  
   String getText() {
     return this.text;
   }
-
-  void setText(String t) {
-    this.text = t;
+    
+  public int getValue(int i){
+    return this.bits.get(i).getValue();
   }
 
-  void add(Bit bit) {
-    if (this.bits.size() < MAXIMUM_LENGTH) {
-      this.bits.add(bit);
+  public void numberConversion() {
+    if (this.text == "") {
+      println("number conversion NOT running");
     } else {
-      System.out.println("BINARY VALUE IS FULL");
+      //Converts a binary string to a decimal number
+      int decimalNum = Integer.parseInt(this.text, 2);
+      //Converts decimal number into hexidecimal string 
+      String hexStr = Integer.toString(decimalNum, 16);
+      String decimalStr = "" + decimalNum;
+      this.decimalString = decimalStr;
+      this.hexString = hexStr;
+      fill(textCol);
+      //Displays number conversions for a given binary number
+      text("Denary: " + decimalString + " | Hex: " + hexString.toUpperCase(), bits.get(0).getX()+135, bits.get(0).getY()-80);
     }
   }
 
@@ -222,24 +223,22 @@ class Binary extends DetectedObject {
     }
   }
 
-  private void binaryText() {
-    String binaryText = "";
-    for (Bit bit : this.bits) {
-      binaryText+= bit.value;
-    }
-    this.text = binaryText;
+  void setPos(int x, int y) {
+    locX=x; 
+    locY=y;
+  }
+
+  void setText(String t) {
+    this.text = t;
+  }
+  
+  void shiftPos(int dx, int dy) {
+    locX+=dx; 
+    locY+=dy;
   }
 
   int size() {
     return bits.size();
-  }
-
-  boolean contains(Bit bit) {
-    return bits.contains(bit);
-  }
-  
-  public int getValue(int i){
-    return this.bits.get(i).getValue();
   }
 
   public void sort(Comparator<Bit> comp) {
@@ -248,9 +247,5 @@ class Binary extends DetectedObject {
 
   String toString() {
     return ""+this.bits;
-    /*
-    "rectCol: " + rectCol + " textCol: " + textCol + " locX: " + locX + " locY " + locY + " width: " + width + " height" + height + " rad: " + rad
-      + " Bit type: Binary";
-      */
   }
 }
