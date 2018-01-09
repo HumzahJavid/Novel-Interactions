@@ -304,7 +304,7 @@ void addTuioObject(TuioObject tobj) {
     case 22:
       o = new MathOperator("*");
       break;
-      case 23:
+    case 23:
       o = new MathOperator("/");
       break;
     default:
@@ -398,6 +398,7 @@ void removeTuioObject(TuioObject tobj) {
   int id = tobj.getSymbolID();
   Bit bitToRemove = new Bit();
   LogicGate gateToRemove = new AndGate();
+  MathOperator operatorToRemove = new MathOperator();
 
   synchronized(objects) {
     if (objects.containsKey(id)) {
@@ -421,6 +422,14 @@ void removeTuioObject(TuioObject tobj) {
     gateToRemove.destroyOutput();
     gateList.remove(gateToRemove);
     gateToRemove = null;
+
+    for (MathOperator operator : operatorList) {
+      if (operator.id == id) {
+        operatorToRemove = operator;
+      }
+    }
+    operatorList.remove(operatorToRemove);
+    operatorToRemove = null;
   }
 }
 

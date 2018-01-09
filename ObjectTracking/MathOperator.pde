@@ -3,6 +3,9 @@ class MathOperator extends DetectedObject {
   int size = 50;
   int id;
 
+  MathOperator() {
+  }
+
   MathOperator(String operator) {
     rectCol=color(255, 50, 50);
     textCol=color(50, 50, 50);
