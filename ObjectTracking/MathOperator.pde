@@ -231,29 +231,3 @@ class MathOperator extends DetectedObject {
     this.id = id;
   }
 }
-/*
-public static void binarySub(int[] a, int[] b) {
- int fakeDecimal = 0;
- int c[] = new int[a.length];
- for (int i = a.length-1; i > -1; i--) {
- 
- // returns-1
- c[i] = (a[i] - b[i]);
- System.out.println(" a (" + a[i] + ") -  b(" + b[i] + ") = ");
- 
- System.out.println("C "+ c[i]);
- if ((c[i] == -1) && (i != 0)){
- c[i] = 1;
- }
- }
- 
- for (int i = 0; i < a.length; i++) {
- fakeDecimal = fakeDecimal * 2 + (a[i] - b[i] - 0);
- // System.out.print(decimal);
- }
- System.out.println("fake decimal = " + fakeDecimal);
- 
- printArr(c);
- toDec(c);
- 
- }*/
