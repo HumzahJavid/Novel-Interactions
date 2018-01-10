@@ -212,33 +212,29 @@ class MathOperator extends DetectedObject {
       }
       binary8Bit = binary8Bit / 2;
     }
-    int added = binaryOneNumber / binaryTwoNumber;
-    fill(0);
-    text("=", this.getX() + 45, this.getY());
-    text("Denary: " + added, this.getX() + 150, this.getY());
-    int pos = 370;
-    text("| Binary: ", this.getX() + 300, this.getY());
-    for (int i = 0; i < 8; i++) {
-      text(binaryAdd[i], this.getX() + pos, this.getY());
-      pos = pos + 20;
-    }
+
     //the integer/characteristic part of the binary number
     int[]beforeDecimalPoint = removePadding(binaryAdd);
     int numberOfBitsAfterDecimalPoint = binaryAdd.length - beforeDecimalPoint.length;
     //the fractional/mantissa part of the binary number
     int[]afterDecimalPoint = calculateBitsAfterDecimal(divisionResult%1, numberOfBitsAfterDecimalPoint);
-
-    println("the division result is " + divisionResult);
-    println("beforeDecimal ");
-    for (int i = 0; i<beforeDecimalPoint.length; i++) {
-      print(beforeDecimalPoint[i] + " ");
+    String denaryString = String.format("%s%.2f", "= Denary: ", divisionResult);
+    fill(0);
+    text(denaryString, this.getX() + 150, this.getY());
+    int pos = 370;
+    text("| Binary: ", this.getX() + 300, this.getY());
+    for (int i = 0; i < beforeDecimalPoint.length; i++) {
+      text(beforeDecimalPoint[i], this.getX() + pos, this.getY());
+      pos = pos + 20;
     }
     
-    println("afterDecimal");
-    for (int i = 0; i<afterDecimalPoint.length; i++) {
-      print(afterDecimalPoint[i] + " ");
+      text(".", this.getX() + pos, this.getY());
+      pos = pos + 20;
+    
+    for (int i = 0; i < afterDecimalPoint.length; i++) {
+      text(afterDecimalPoint[i], this.getX() + pos, this.getY());
+      pos = pos + 20;
     }
-    println("\n");
     
     return 1;
   }
