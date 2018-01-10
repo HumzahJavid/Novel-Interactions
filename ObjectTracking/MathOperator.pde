@@ -131,7 +131,7 @@ class MathOperator extends DetectedObject {
     return 1;
   }
 
-  public int  mutiplication(Binary a, Binary b) {
+  public int mutiplication(Binary a, Binary b) {
     int[] binaryAdd = new int[8];
     int[] bin1 = new int[4];
     int[] bin2 = new int[4];
@@ -183,6 +183,7 @@ class MathOperator extends DetectedObject {
     int[] bin2 = new int[4];
     int binaryOneNumber = 0;
     int binaryTwoNumber = 0;
+    float divisionResult = 0.0;
     int binaryValue = 8;
 
     for (int i = 0; i < 4; i++) {
@@ -199,6 +200,7 @@ class MathOperator extends DetectedObject {
       binaryValue = binaryValue / 2;
     }
     int binaryTotal = binaryOneNumber / binaryTwoNumber;
+    divisionResult = (float)(binaryOneNumber) / (float)(binaryTwoNumber);
     int binary8Bit = 128;
 
     for (int i = 0; i < 8; i++) {
@@ -220,6 +222,24 @@ class MathOperator extends DetectedObject {
       text(binaryAdd[i], this.getX() + pos, this.getY());
       pos = pos + 20;
     }
+    //the integer/characteristic part of the binary number
+    int[]beforeDecimalPoint = removePadding(binaryAdd);
+    int numberOfBitsAfterDecimalPoint = binaryAdd.length - beforeDecimalPoint.length;
+    //the fractional/mantissa part of the binary number
+    int[]afterDecimalPoint = calculateBitsAfterDecimal(divisionResult%1, numberOfBitsAfterDecimalPoint);
+
+    println("the division result is " + divisionResult);
+    println("beforeDecimal ");
+    for (int i = 0; i<beforeDecimalPoint.length; i++) {
+      print(beforeDecimalPoint[i] + " ");
+    }
+    
+    println("afterDecimal");
+    for (int i = 0; i<afterDecimalPoint.length; i++) {
+      print(afterDecimalPoint[i] + " ");
+    }
+    println("\n");
+    
     return 1;
   }
 
@@ -230,4 +250,47 @@ class MathOperator extends DetectedObject {
   public void setId(int id) {
     this.id = id;
   }
+
+  private int[] calculateBitsAfterDecimal(float decimal, int numberOfElements) {
+    //calculates the binary number (given a number less than 1)
+    float base = 2;
+    float result;
+    int[] arr = new int[numberOfElements];
+
+    for (int i = 0; i < numberOfElements; i++) {
+      //should stop filling the array when result = 0, but need to continue to keep size of final array 8 bits
+      result = decimal*base;
+      arr[i] = (int)result;
+      decimal = result %1;
+    }
+    return arr;
+  }
+
+  private int[] removePadding(int[] binaryAdd) {
+    //returns a new array with the leading zereos(padding) removed from the input array,
+    int numberOfPaddingElements = 0;
+    int length = binaryAdd.length;
+    int endIndex = length;
+
+    for (int i = 0; i < length; i++) {
+      //locates the first '1' in the array 
+      if (binaryAdd[i] == 1) {
+        //removes all the '0' elements(the padding) preceeding the first '1' 
+        for (int j = i; j < endIndex; j++) {
+          binaryAdd[j - i] = binaryAdd[j];
+        }
+        //stores the index of the first '1' (in its original position).
+        numberOfPaddingElements = i; 
+        //to exit the loop
+        i = endIndex;
+      }
+    }
+    //end index with number of padding elements removed.
+    endIndex -= numberOfPaddingElements;
+    int[] newArr = new int[endIndex];
+    for (int i = 0; i < newArr.length; i++) {
+      newArr[i] = binaryAdd[i];
+    }
+    return newArr;
+  } 
 }
