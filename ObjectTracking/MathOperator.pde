@@ -199,6 +199,13 @@ class MathOperator extends DetectedObject {
       }
       binaryValue = binaryValue / 2;
     }
+    //prevents division by 0
+    if (binaryTwoNumber == 0) {
+      String denaryString = String.format("%s", "=  Denary: " + '\u221e' + " | Binary: " + '\u221e');
+      text(denaryString, this.getX() + 205, this.getY());
+      return 0;
+    }
+
     int binaryTotal = binaryOneNumber / binaryTwoNumber;
     divisionResult = (float)(binaryOneNumber) / (float)(binaryTwoNumber);
     int binary8Bit = 128;
@@ -218,24 +225,19 @@ class MathOperator extends DetectedObject {
     int numberOfBitsAfterDecimalPoint = binaryAdd.length - beforeDecimalPoint.length;
     //the fractional/mantissa part of the binary number
     int[]afterDecimalPoint = calculateBitsAfterDecimal(divisionResult%1, numberOfBitsAfterDecimalPoint);
-    String denaryString = String.format("%s%.2f", "= Denary: ", divisionResult);
-    fill(0);
-    text(denaryString, this.getX() + 150, this.getY());
-    int pos = 370;
-    text("| Binary: ", this.getX() + 300, this.getY());
+
+    String binaryString = "";
     for (int i = 0; i < beforeDecimalPoint.length; i++) {
-      text(beforeDecimalPoint[i], this.getX() + pos, this.getY());
-      pos = pos + 20;
+      binaryString += beforeDecimalPoint[i];
     }
-    
-      text(".", this.getX() + pos, this.getY());
-      pos = pos + 20;
-    
+    binaryString +=".";
     for (int i = 0; i < afterDecimalPoint.length; i++) {
-      text(afterDecimalPoint[i], this.getX() + pos, this.getY());
-      pos = pos + 20;
+      binaryString += afterDecimalPoint[i];
     }
-    
+
+    String answerString = String.format("%s%.2f%s", "= Denary: ", divisionResult, " | Binary: "+ binaryString);
+    fill(0);
+    text(answerString, this.getX() + 290, this.getY());
     return 1;
   }
 
@@ -267,10 +269,13 @@ class MathOperator extends DetectedObject {
     int numberOfPaddingElements = 0;
     int length = binaryAdd.length;
     int endIndex = length;
+    boolean valid = false;
+    int[] newArr;
 
     for (int i = 0; i < length; i++) {
       //locates the first '1' in the array 
       if (binaryAdd[i] == 1) {
+        valid = true;
         //removes all the '0' elements(the padding) preceeding the first '1' 
         for (int j = i; j < endIndex; j++) {
           binaryAdd[j - i] = binaryAdd[j];
@@ -281,11 +286,17 @@ class MathOperator extends DetectedObject {
         i = endIndex;
       }
     }
-    //end index with number of padding elements removed.
-    endIndex -= numberOfPaddingElements;
-    int[] newArr = new int[endIndex];
-    for (int i = 0; i < newArr.length; i++) {
-      newArr[i] = binaryAdd[i];
+
+    if (valid) {
+      //end index with number of padding elements removed.
+      endIndex -= numberOfPaddingElements;
+      newArr = new int[endIndex];
+      for (int i = 0; i < newArr.length; i++) {
+        newArr[i] = binaryAdd[i];
+      }
+    } else {
+      //To put a 0 before the decimal point
+      newArr = new int[1];
     }
     return newArr;
   } 
