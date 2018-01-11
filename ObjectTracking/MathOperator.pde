@@ -92,6 +92,9 @@ class MathOperator extends DetectedObject {
     int binaryOneNumber = 0;
     int binaryTwoNumber = 0;
     int binaryValue = 8;
+    boolean negative = false;
+    int binaryTotal = 0;
+    int added = 0;
 
     for (int i = 0; i < 4; i++) {
       bin1[i] = a.getValue(i);
@@ -106,7 +109,14 @@ class MathOperator extends DetectedObject {
       }
       binaryValue = binaryValue / 2;
     }
-    int binaryTotal = binaryOneNumber - binaryTwoNumber;
+    
+    if(binaryOneNumber >= binaryTwoNumber){
+      binaryTotal = binaryOneNumber - binaryTwoNumber;
+    } else if(binaryOneNumber < binaryTwoNumber){
+      binaryTotal = binaryTwoNumber - binaryOneNumber;
+      negative = true;
+    }
+    
     int binary8Bit = 128;
 
     for (int i = 0; i < 8; i++) {
@@ -118,12 +128,29 @@ class MathOperator extends DetectedObject {
       }
       binary8Bit = binary8Bit / 2;
     }
-    int added = binaryOneNumber - binaryTwoNumber;
+    if(negative == true){
+      added = binaryTwoNumber - binaryOneNumber;
+    } else if(negative == false){
+      added = binaryOneNumber - binaryTwoNumber;
+    }
+    
     fill(0);
     text("=", this.getX() + 45, this.getY());
-    text("Denary: " + added, this.getX() + 150, this.getY());
-    int pos = 370;
-    text("| Binary: ", this.getX() + 300, this.getY());
+    if(negative == true){
+      text("Denary: -" + added, this.getX() + 150, this.getY());
+    } else if(negative == false){
+      text("Denary: " + added, this.getX() + 150, this.getY());
+    }
+    int pos = 0;
+    
+    if(negative == true){
+      pos = 410;
+      text("| Binary: -", this.getX() + 320, this.getY());
+    } else if(negative == false){
+      pos = 370;
+      text("| Binary: ", this.getX() + 300, this.getY());
+    }
+    
     for (int i = 0; i < 8; i++) {
       text(binaryAdd[i], this.getX() + pos, this.getY());
       pos = pos + 20;

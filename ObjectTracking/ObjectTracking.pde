@@ -34,7 +34,7 @@ int operatorIds[] = {20, 21, 22, 23};
 int gateIds[] = {30, 31, 32, 33};
 
 void setup() {
-  size(1000, 650);
+  size(1280, 720);
   textSize(30);
 
   rectMode(CENTER);
