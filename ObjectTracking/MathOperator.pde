@@ -75,13 +75,13 @@ class MathOperator extends DetectedObject {
     int added = binaryOneNumber + binaryTwoNumber;
     String hexStr = Integer.toString(added, 16);
     fill(0);
-    text("=", this.getX() + 45, this.getY());
-    text("Denary: " + added + " | Hex: " + hexStr, this.getX() + 200, this.getY());
-    int pos = 475;
+    text(" = ", this.getX() + 45, this.getY());
+    text("Denary: " + added + " | Hex: " + hexStr, this.getX() + 220, this.getY());
+    int pos = 530;
     //170
-    text("| Binary: ", this.getX() + 410, this.getY());
+    text(" | Binary: ", this.getX() + 450, this.getY());
     for (int i = 0; i < 8; i++) {
-      text(binaryAdd[i], this.getX() + pos, this.getY());
+      text(" " + binaryAdd[i], this.getX() + pos, this.getY());
       pos = pos + 20;
     }
     return 1;
@@ -140,19 +140,17 @@ class MathOperator extends DetectedObject {
     fill(0);
     text("=", this.getX() + 45, this.getY());
     if(negative == true){
-      text("Denary: -" + added + " | Hex: " + hexStr, this.getX() + 215, this.getY());
+      text("Denary: -" + added + " | Hex: -" + hexStr, this.getX() + 215, this.getY());
     } else if(negative == false){
       text("Denary: " + added + " | Hex: " + hexStr, this.getX() + 215, this.getY());
     }
     int pos = 0;
-     //  
-    //
     
     if(negative == true){
-      pos = 550;
+      pos = 535;
       text("| Binary: -", this.getX() + 450, this.getY());
     } else if(negative == false){
-      pos = 550;
+      pos = 535;
       text("| Binary: ", this.getX() + 450, this.getY());
     }
     
@@ -197,13 +195,11 @@ class MathOperator extends DetectedObject {
       binary8Bit = binary8Bit / 2;
     }
     int added = binaryOneNumber * binaryTwoNumber;
-    String hexStr = Integer.toString(added, 16);
     fill(0);
     text("=", this.getX() + 45, this.getY());
     text("Denary: " + added, this.getX() + 150, this.getY());
-    text(" | Hex: " + hexStr, this.getX() + 300, this.getY());
-    int pos = 530;
-    text("| Binary: ", this.getX() + 450, this.getY());
+    int pos = 370;
+    text("| Binary: ", this.getX() + 300, this.getY());
     for (int i = 0; i < 8; i++) {
       text(binaryAdd[i], this.getX() + pos, this.getY());
       pos = pos + 20;
