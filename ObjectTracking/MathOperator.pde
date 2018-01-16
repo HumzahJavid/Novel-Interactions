@@ -233,7 +233,7 @@ class MathOperator extends DetectedObject {
     }
     //prevents division by 0
     if (binaryTwoNumber == 0) {
-      String denaryString = String.format("%s", "=  Denary: " + '\u221e' + " | Binary: " + '\u221e');
+      String denaryString = String.format("%s", "=  Denary: " + '\u221e' + " | Hex: " + '\u221e' + " | Binary: " + '\u221e');
       text(denaryString, this.getX() + 205, this.getY());
       return 0;
     }
@@ -257,19 +257,38 @@ class MathOperator extends DetectedObject {
     int numberOfBitsAfterDecimalPoint = binaryAdd.length - beforeDecimalPoint.length;
     //the fractional/mantissa part of the binary number
     int[]afterDecimalPoint = calculateBitsAfterDecimal(divisionResult%1, numberOfBitsAfterDecimalPoint);
-
+    String tempBinaryString = "";
+    String hexString = "";
+    String hexString3 = decimalTo16(divisionResult);
+    
     String binaryString = "";
     for (int i = 0; i < beforeDecimalPoint.length; i++) {
       binaryString += beforeDecimalPoint[i];
     }
+    tempBinaryString = binaryString;
+    hexString+=base2To16String(tempBinaryString);
     binaryString +=".";
+    hexString+=".";
+    
+    tempBinaryString = "";
     for (int i = 0; i < afterDecimalPoint.length; i++) {
       binaryString += afterDecimalPoint[i];
+      //only store 2 decimal places
+      if (i < 3){
+        tempBinaryString += afterDecimalPoint[i];
+      }
     }
-
-    String answerString = String.format("%s%.2f%s", "= Denary: ", divisionResult, " | Binary: "+ binaryString);
+    
+    hexString+=base2To16String(tempBinaryString);
+    println("All hex strings -----");
+    println("hexString1: " + hexString);
+    println("hexString3: " + hexString3);
+    println("----END -----");
+        
+    
+    String answerString = String.format("%s%.2f%s", "= Denary: ", divisionResult, " | Hex: " + hexString3 + " | Binary: "+ binaryString);
     fill(0);
-    text(answerString, this.getX() + 290, this.getY());
+    text(answerString, this.getX() + 320, this.getY());
     return 1;
   }
 
@@ -330,6 +349,40 @@ class MathOperator extends DetectedObject {
       //To put a 0 before the decimal point
       newArr = new int[1];
     }
+    
     return newArr;
   } 
+  
+  private String base2To16String(String base2Input){
+    //converts an input string base 2(binary) to base 16 (hexadecimal)
+    //base2Input = "1100"
+    //base16 = "C" 
+    int base2InputInt = Integer.parseInt(base2Input);//, 2);
+    String base16 = Integer.toString(base2InputInt, 16);
+    return base16;
+  }
+  
+  public String decimalTo16(float base10Input){
+    String hexString= "";
+    int divisionInt = (int)(base10Input / 1);
+    println("divisionInt = " + divisionInt);
+    hexString += Integer.toString(divisionInt, 16);
+    hexString+=".";
+    
+    
+    //convert the float to String, get all digits after decimal point
+    //convert that to base 16 (from base 10)
+    String divResult = ""+base10Input;
+    
+    println("DIVRESUL = " + divResult);
+    String afterDecimalBase10;
+    afterDecimalBase10 = divResult.substring(divResult.indexOf(".") + 1);
+    
+    println("afterDecimalBase10 = " + afterDecimalBase10);
+    hexString+= Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
+    
+    System.out.println("input = " + base10Input);
+    System.out.println("output = " + hexString);
+    return hexString;
+  }
 }
