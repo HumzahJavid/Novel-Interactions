@@ -111,14 +111,14 @@ class MathOperator extends DetectedObject {
       }
       binaryValue = binaryValue / 2;
     }
-    
-    if(binaryOneNumber >= binaryTwoNumber){
+
+    if (binaryOneNumber >= binaryTwoNumber) {
       binaryTotal = binaryOneNumber - binaryTwoNumber;
-    } else if(binaryOneNumber < binaryTwoNumber){
+    } else if (binaryOneNumber < binaryTwoNumber) {
       binaryTotal = binaryTwoNumber - binaryOneNumber;
       negative = true;
     }
-    
+
     int binary8Bit = 128;
 
     for (int i = 0; i < 8; i++) {
@@ -130,32 +130,32 @@ class MathOperator extends DetectedObject {
       }
       binary8Bit = binary8Bit / 2;
     }
-    if(negative == true){
+    if (negative == true) {
       added = binaryTwoNumber - binaryOneNumber;
-    } else if(negative == false){
+    } else if (negative == false) {
       added = binaryOneNumber - binaryTwoNumber;
     }
-    
+
     String hexStr = Integer.toString(added, 16);
     fill(0);
     text("=", this.getX() + 45, this.getY());
-    if(negative == true){
+    if (negative == true) {
       text("Denary: -" + added + " | Hex: " + hexStr, this.getX() + 215, this.getY());
-    } else if(negative == false){
+    } else if (negative == false) {
       text("Denary: " + added + " | Hex: " + hexStr, this.getX() + 215, this.getY());
     }
     int pos = 0;
-     //  
+    //  
     //
-    
-    if(negative == true){
+
+    if (negative == true) {
       pos = 550;
       text("| Binary: -", this.getX() + 450, this.getY());
-    } else if(negative == false){
+    } else if (negative == false) {
       pos = 550;
       text("| Binary: ", this.getX() + 450, this.getY());
     }
-    
+
     for (int i = 0; i < 8; i++) {
       text(binaryAdd[i], this.getX() + pos, this.getY());
       pos = pos + 20;
@@ -258,37 +258,25 @@ class MathOperator extends DetectedObject {
     //the fractional/mantissa part of the binary number
     int[]afterDecimalPoint = calculateBitsAfterDecimal(divisionResult%1, numberOfBitsAfterDecimalPoint);
     String tempBinaryString = "";
-    String hexString = "";
-    String hexString3 = decimalTo16(divisionResult);
-    
+    String hexString = decimalTo16(divisionResult);
+
     String binaryString = "";
     for (int i = 0; i < beforeDecimalPoint.length; i++) {
       binaryString += beforeDecimalPoint[i];
     }
-    tempBinaryString = binaryString;
-    hexString+=base2To16String(tempBinaryString);
+
     binaryString +=".";
-    hexString+=".";
-    
-    tempBinaryString = "";
     for (int i = 0; i < afterDecimalPoint.length; i++) {
       binaryString += afterDecimalPoint[i];
-      //only store 2 decimal places
-      if (i < 3){
-        tempBinaryString += afterDecimalPoint[i];
-      }
     }
-    
-    hexString+=base2To16String(tempBinaryString);
     println("All hex strings -----");
-    println("hexString1: " + hexString);
-    println("hexString3: " + hexString3);
+    println("hexString: " + hexString);
     println("----END -----");
-        
-    
-    String answerString = String.format("%s%.2f%s", "= Denary: ", divisionResult, " | Hex: " + hexString3 + " | Binary: "+ binaryString);
+
+
+    String answerString = String.format("%s%.3f%s", "= Denary: ", divisionResult, " | Hex: " + hexString + " | Binary: "+ binaryString);
     fill(0);
-    text(answerString, this.getX() + 320, this.getY());
+    text(answerString, this.getX() + 395, this.getY());
     return 1;
   }
 
@@ -349,40 +337,94 @@ class MathOperator extends DetectedObject {
       //To put a 0 before the decimal point
       newArr = new int[1];
     }
-    
+
     return newArr;
-  } 
-  
-  private String base2To16String(String base2Input){
-    //converts an input string base 2(binary) to base 16 (hexadecimal)
-    //base2Input = "1100"
-    //base16 = "C" 
-    int base2InputInt = Integer.parseInt(base2Input);//, 2);
-    String base16 = Integer.toString(base2InputInt, 16);
-    return base16;
   }
-  
-  public String decimalTo16(float base10Input){
+
+  public String decimalTo16(float base10Input) {
     String hexString= "";
     int divisionInt = (int)(base10Input / 1);
     println("divisionInt = " + divisionInt);
     hexString += Integer.toString(divisionInt, 16);
     hexString+=".";
-    
-    
+
+
     //convert the float to String, get all digits after decimal point
     //convert that to base 16 (from base 10)
     String divResult = ""+base10Input;
-    
+
     println("DIVRESUL = " + divResult);
     String afterDecimalBase10;
     afterDecimalBase10 = divResult.substring(divResult.indexOf(".") + 1);
-    
-    println("afterDecimalBase10 = " + afterDecimalBase10);
-    hexString+= Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
-    
+
+    println("original afterDecimalBase10 = " + afterDecimalBase10);
+    String deleteString = "";
+    //need to get a substring up to a max length of 4 
+    if (afterDecimalBase10.length() > 4) {
+      //contains 4 'chars'
+      deleteString = afterDecimalBase10.substring(0, 4);
+    } else {
+      deleteString = afterDecimalBase10.substring(0, afterDecimalBase10.length());
+    }
+    afterDecimalBase10 = stringSifFig(deleteString);
+    println("NEW  afterDecimalBase10 = " + afterDecimalBase10);
+
+    String afterDecimalPointString = Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
+
+    println("afterDecimalPoint String = " + afterDecimalPointString);
+    hexString+=afterDecimalPointString;
     System.out.println("input = " + base10Input);
     System.out.println("output = " + hexString);
     return hexString;
+  }
+
+  private String stringSifFig(String input) {
+    //convert .125 -> .130(rounded) -> .82(base 16) 
+    //incorrect (expected result .125 -> .7D(base 16) 
+    //convert .25 -> .30(rounded) ->  .300 (added 0) -> .12c(base 16)
+    
+    //incorrect (expected result .25 -> .7D(base 16) 
+    //convert .125 (base 10) -> .130 (base 10) -> .82(base 16)
+    //convert .5 (base 10)  ->(add 00) .500 (base 10) -> .14f(base 16)
+    //converts .25 -> 250 
+    int length = input.length();
+    String output = "";
+    if (length == 1) {
+      output = (input + "00");
+      println("hex digits after decimal point = " + output);
+    } else {
+      String firstDigit = input.substring(0, 1);
+      //take the last 2 digits 
+      String last2Digits = input.substring(length - 2, length);
+      println("last 2 dig = " + last2Digits);
+
+      //extract the chars 
+      String toBeRounded = last2Digits.substring(0, 1);
+      String decider = last2Digits.substring(1, 2);
+      int toBeRoundedInt = Integer.parseInt(toBeRounded);
+      int deciderInt = Integer.parseInt(decider);
+
+      if (deciderInt >= 5) {
+        //need to add 1 to ToBeRounded 
+        toBeRoundedInt+=1;
+        deciderInt = 0;
+      }
+
+      last2Digits = "" + toBeRoundedInt + ""+ deciderInt;
+      println("new last 2 digits = " + last2Digits);
+      if (length == 2) {
+        output = last2Digits + "0";
+        println("hex digits after decimal point = " + output);
+      } else if (length == 3) {
+        println("hex digits after decimal point = " + output);
+        output = firstDigit+last2Digits;
+      } else if (length ==4) {
+        output = input.substring(0,2)+toBeRoundedInt;
+      } else {
+        println("cant convert the digits after the decimal point : " + input + "to hex using stringSifFig(input)... unexpected length");
+      }
+    }
+
+    return output;
   }
 }

@@ -34,7 +34,6 @@ int operatorIds[] = {20, 21, 22, 23};
 int gateIds[] = {30, 31, 32, 33};
 
 void setup() {
-      System.out.println(Double.valueOf("0x1.11p1"));
   size(1280, 720);
   textSize(30);
 
