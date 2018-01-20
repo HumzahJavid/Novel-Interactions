@@ -344,87 +344,54 @@ class MathOperator extends DetectedObject {
   public String decimalTo16(float base10Input) {
     String hexString= "";
     int divisionInt = (int)(base10Input / 1);
-    println("divisionInt = " + divisionInt);
     hexString += Integer.toString(divisionInt, 16);
     hexString+=".";
-
-
-    //convert the float to String, get all digits after decimal point
-    //convert that to base 16 (from base 10)
     String divResult = ""+base10Input;
 
-    println("DIVRESUL = " + divResult);
     String afterDecimalBase10;
+    //all the digits after decimal point
     afterDecimalBase10 = divResult.substring(divResult.indexOf(".") + 1);
-
-    println("original afterDecimalBase10 = " + afterDecimalBase10);
-    String deleteString = "";
+    //println("original afterDecimalBase10 = " + afterDecimalBase10);
+    String max4Digits = "";
     //need to get a substring up to a max length of 4 
     if (afterDecimalBase10.length() > 4) {
-      //contains 4 'chars'
-      deleteString = afterDecimalBase10.substring(0, 4);
+      max4Digits = afterDecimalBase10.substring(0, 4);
     } else {
-      deleteString = afterDecimalBase10.substring(0, afterDecimalBase10.length());
+      max4Digits = afterDecimalBase10.substring(0, afterDecimalBase10.length());
     }
-    afterDecimalBase10 = stringSifFig(deleteString);
-    println("NEW  afterDecimalBase10 = " + afterDecimalBase10);
-
-    String afterDecimalPointString = Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
-
-    println("afterDecimalPoint String = " + afterDecimalPointString);
-    hexString+=afterDecimalPointString;
+    //contains 3 digits (rounded to the third decimal place)
+    afterDecimalBase10 = roundedHexadecimalString(max4Digits);
+    String afterDecimalPointHex = Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
+    //println("afterDecimalPoint (new afterDecimalBase10) = " + afterDecimalPointHex);
+    hexString+=afterDecimalPointHex;
     System.out.println("input = " + base10Input);
     System.out.println("output = " + hexString);
+
     return hexString;
   }
 
-  private String stringSifFig(String input) {
-    //convert .125 -> .130(rounded) -> .82(base 16) 
-    //incorrect (expected result .125 -> .7D(base 16) 
-    //convert .25 -> .30(rounded) ->  .300 (added 0) -> .12c(base 16)
-    
-    //incorrect (expected result .25 -> .7D(base 16) 
-    //convert .125 (base 10) -> .130 (base 10) -> .82(base 16)
-    //convert .5 (base 10)  ->(add 00) .500 (base 10) -> .14f(base 16)
-    //converts .25 -> 250 
+  private String roundedHexadecimalString(String input) {
+    //add padding zereo to make input a length of 4 //14 - > 1400
+    while (input.length() < 4) {
+      input+="0";
+    }
     int length = input.length();
     String output = "";
-    if (length == 1) {
-      output = (input + "00");
-      println("hex digits after decimal point = " + output);
-    } else {
-      String firstDigit = input.substring(0, 1);
-      //take the last 2 digits 
-      String last2Digits = input.substring(length - 2, length);
-      println("last 2 dig = " + last2Digits);
-
-      //extract the chars 
-      String toBeRounded = last2Digits.substring(0, 1);
-      String decider = last2Digits.substring(1, 2);
-      int toBeRoundedInt = Integer.parseInt(toBeRounded);
-      int deciderInt = Integer.parseInt(decider);
-
-      if (deciderInt >= 5) {
-        //need to add 1 to ToBeRounded 
-        toBeRoundedInt+=1;
-        deciderInt = 0;
-      }
-
-      last2Digits = "" + toBeRoundedInt + ""+ deciderInt;
-      println("new last 2 digits = " + last2Digits);
-      if (length == 2) {
-        output = last2Digits + "0";
-        println("hex digits after decimal point = " + output);
-      } else if (length == 3) {
-        println("hex digits after decimal point = " + output);
-        output = firstDigit+last2Digits;
-      } else if (length ==4) {
-        output = input.substring(0,2)+toBeRoundedInt;
-      } else {
-        println("cant convert the digits after the decimal point : " + input + "to hex using stringSifFig(input)... unexpected length");
-      }
+    String first2Digits = input.substring(0, 2);
+    //take the last 2 digits 
+    String last2Digits = input.substring(length - 2, length);
+    //extract the chars 
+    String toBeRounded = last2Digits.substring(0, 1);
+    String decider = last2Digits.substring(1, 2);
+    int toBeRoundedInt = Integer.parseInt(toBeRounded);
+    int deciderInt = Integer.parseInt(decider);
+    //rounding logic
+    if (deciderInt >= 5) {
+      toBeRoundedInt+=1;
+      deciderInt = 0;
     }
-
+    //output is rounded to 3 decimal places
+    output = first2Digits + toBeRoundedInt;
     return output;
   }
 }
