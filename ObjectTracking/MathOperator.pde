@@ -112,14 +112,14 @@ class MathOperator extends DetectedObject {
       }
       binaryValue = binaryValue / 2;
     }
-    
-    if(binaryOneNumber >= binaryTwoNumber){
+
+    if (binaryOneNumber >= binaryTwoNumber) {
       binaryTotal = binaryOneNumber - binaryTwoNumber;
-    } else if(binaryOneNumber < binaryTwoNumber){
+    } else if (binaryOneNumber < binaryTwoNumber) {
       binaryTotal = binaryTwoNumber - binaryOneNumber;
       negative = true;
     }
-    
+
     int binary8Bit = 128;
 
     for (int i = 0; i < 8; i++) {
@@ -131,12 +131,12 @@ class MathOperator extends DetectedObject {
       }
       binary8Bit = binary8Bit / 2;
     }
-    if(negative == true){
+    if (negative == true) {
       added = binaryTwoNumber - binaryOneNumber;
-    } else if(negative == false){
+    } else if (negative == false) {
       added = binaryOneNumber - binaryTwoNumber;
     }
-    
+
     String hexStr = Integer.toString(added, 16);
     fill(0);
     text("=", this.getX() + 45, this.getY());
@@ -154,7 +154,7 @@ class MathOperator extends DetectedObject {
       pos = 535;
       text("| Binary: ", this.getX() + 450, this.getY());
     }
-    
+
     for (int i = 0; i < 8; i++) {
       text(binaryAdd[i], this.getX() + pos, this.getY());
       pos = pos + 20;
@@ -234,7 +234,7 @@ class MathOperator extends DetectedObject {
     }
     //prevents division by 0
     if (binaryTwoNumber == 0) {
-      String denaryString = String.format("%s", "=  Denary: " + '\u221e' + " | Binary: " + '\u221e');
+      String denaryString = String.format("%s", "=  Denary: " + '\u221e' + " | Hex: " + '\u221e' + " | Binary: " + '\u221e');
       text(denaryString, this.getX() + 205, this.getY());
       return 0;
     }
@@ -258,19 +258,26 @@ class MathOperator extends DetectedObject {
     int numberOfBitsAfterDecimalPoint = binaryAdd.length - beforeDecimalPoint.length;
     //the fractional/mantissa part of the binary number
     int[]afterDecimalPoint = calculateBitsAfterDecimal(divisionResult%1, numberOfBitsAfterDecimalPoint);
+    String tempBinaryString = "";
+    String hexString = decimalTo16(divisionResult);
 
     String binaryString = "";
     for (int i = 0; i < beforeDecimalPoint.length; i++) {
       binaryString += beforeDecimalPoint[i];
     }
+
     binaryString +=".";
     for (int i = 0; i < afterDecimalPoint.length; i++) {
       binaryString += afterDecimalPoint[i];
     }
+    println("All hex strings -----");
+    println("hexString: " + hexString);
+    println("----END -----");
 
-    String answerString = String.format("%s%.2f%s", "= Denary: ", divisionResult, " | Binary: "+ binaryString);
+
+    String answerString = String.format("%s%.3f%s", "= Denary: ", divisionResult, " | Hex: " + hexString + " | Binary: "+ binaryString);
     fill(0);
-    text(answerString, this.getX() + 290, this.getY());
+    text(answerString, this.getX() + 395, this.getY());
     return 1;
   }
 
@@ -331,6 +338,61 @@ class MathOperator extends DetectedObject {
       //To put a 0 before the decimal point
       newArr = new int[1];
     }
+
     return newArr;
-  } 
+  }
+
+  public String decimalTo16(float base10Input) {
+    String hexString= "";
+    int divisionInt = (int)(base10Input / 1);
+    hexString += Integer.toString(divisionInt, 16);
+    hexString+=".";
+    String divResult = ""+base10Input;
+
+    String afterDecimalBase10;
+    //all the digits after decimal point
+    afterDecimalBase10 = divResult.substring(divResult.indexOf(".") + 1);
+    //println("original afterDecimalBase10 = " + afterDecimalBase10);
+    String max4Digits = "";
+    //need to get a substring up to a max length of 4 
+    if (afterDecimalBase10.length() > 4) {
+      max4Digits = afterDecimalBase10.substring(0, 4);
+    } else {
+      max4Digits = afterDecimalBase10.substring(0, afterDecimalBase10.length());
+    }
+    //contains 3 digits (rounded to the third decimal place)
+    afterDecimalBase10 = roundedHexadecimalString(max4Digits);
+    String afterDecimalPointHex = Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
+    //println("afterDecimalPoint (new afterDecimalBase10) = " + afterDecimalPointHex);
+    hexString+=afterDecimalPointHex;
+    System.out.println("input = " + base10Input);
+    System.out.println("output = " + hexString);
+
+    return hexString;
+  }
+
+  private String roundedHexadecimalString(String input) {
+    //add padding zereo to make input a length of 4 //14 - > 1400
+    while (input.length() < 4) {
+      input+="0";
+    }
+    int length = input.length();
+    String output = "";
+    String first2Digits = input.substring(0, 2);
+    //take the last 2 digits 
+    String last2Digits = input.substring(length - 2, length);
+    //extract the chars 
+    String toBeRounded = last2Digits.substring(0, 1);
+    String decider = last2Digits.substring(1, 2);
+    int toBeRoundedInt = Integer.parseInt(toBeRounded);
+    int deciderInt = Integer.parseInt(decider);
+    //rounding logic
+    if (deciderInt >= 5) {
+      toBeRoundedInt+=1;
+      deciderInt = 0;
+    }
+    //output is rounded to 3 decimal places
+    output = first2Digits + toBeRoundedInt;
+    return output;
+  }
 }
