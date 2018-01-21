@@ -235,7 +235,7 @@ class MathOperator extends DetectedObject {
     //prevents division by 0
     if (binaryTwoNumber == 0) {
       String denaryString = String.format("%s", "=  Denary: " + '\u221e' + " | Hex: " + '\u221e' + " | Binary: " + '\u221e');
-      text(denaryString, this.getX() + 205, this.getY());
+      text(denaryString, this.getX() + 290, this.getY());
       return 0;
     }
 
@@ -270,10 +270,6 @@ class MathOperator extends DetectedObject {
     for (int i = 0; i < afterDecimalPoint.length; i++) {
       binaryString += afterDecimalPoint[i];
     }
-    println("All hex strings -----");
-    println("hexString: " + hexString);
-    println("----END -----");
-
 
     String answerString = String.format("%s%.3f%s", "= Denary: ", divisionResult, " | Hex: " + hexString + " | Binary: "+ binaryString);
     fill(0);
@@ -365,9 +361,7 @@ class MathOperator extends DetectedObject {
     String afterDecimalPointHex = Integer.toString(Integer.parseInt(afterDecimalBase10), 16);
     //println("afterDecimalPoint (new afterDecimalBase10) = " + afterDecimalPointHex);
     hexString+=afterDecimalPointHex;
-    System.out.println("input = " + base10Input);
-    System.out.println("output = " + hexString);
-
+    
     return hexString;
   }
 
