@@ -231,7 +231,7 @@ public static void propogateOutputs(ArrayList<LogicGate> gateList, ArrayList<Bit
 
 public static boolean withinXRange(float xGate, int gateWidth, float xBit) {
   //check if object is within 100 of the left/right of the gate
-  float xMin = xGate - 100;
+  float xMin = xGate - 175;
   float xMax = xGate;// + gateWidth + 100;
   if ((xBit >= xMin)&&(xBit <= xMax)) {
     return true;
